@@ -318,17 +318,12 @@ class AuthProviderImpl extends BaseNotifier implements AuthProvider {
         final serverVersion = int.parse(serverVersions[i]);
         final localVersion = int.parse(localVersions[i]);
 
-        print('mobile = $localVersion server = $serverVersion check ${serverVersion > localVersion}');
+        if(serverVersion == localVersion){continue;}
 
-        if(serverVersion == localVersion){
-          continue;
-        }
+        isLocalBig = serverVersion < localVersion;
 
-        isLocalBig = !(serverVersion < localVersion);
+        if(isLocalBig){break;}
 
-        if(serverVersion > localVersion){
-          break;
-        }
       }
 
       return isLocalBig;
