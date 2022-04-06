@@ -7,9 +7,11 @@ import 'package:gurukul_app/app/screens/auth/enter_otp_screen.dart';
 import 'package:gurukul_app/app/screens/auth/login_screen_sample.dart';
 import 'package:gurukul_app/app/screens/auth/set_password_screen.dart';
 import 'package:gurukul_app/app/screens/auth/signup_screen.dart';
-import 'package:gurukul_app/app/screens/home/home_screen_sample.dart';
 import 'package:gurukul_app/app/screens/lending_page.dart';
 import 'package:gurukul_app/app/utils/constants.dart';
+import 'app/screens/news/news_list.dart';
+import 'app/screens/nikol_gurukul/nikol_gurukul_form.dart';
+import 'app/screens/profile/profile_screen.dart';
 
 Widget app() {
   return MaterialApp(
@@ -45,11 +47,13 @@ Widget app() {
     routes: {
       kInitialRoute: (context) => LendingPage(),
       kLoginRoute: (context) => LoginScreenSample(),
-      kHomeRoute: (context) => HomeScreenSample(),
+      kProfileScreenRoute: (context) => ProfileScreen(),
       kEnterMobileRoute: (context) => EnterMobileScreen(),
       kEnterOTPRoute: (context) => EnterOTPScreen(),
       kSignupRoute: (context) => SignUpScreen(),
       kForgotPasswordRoute: (context) => SetPasswordScreen(),
+      kNikolGurukulFormRoute: (context) => NikolGurukulForm(),
+      kNewsListScreenRoute: (context) => NewsListScreen(),
     },
   );
 }

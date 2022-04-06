@@ -14,6 +14,9 @@ import 'package:gurukul_app/app/utils/enums.dart';
 import 'package:gurukul_app/app/utils/messages.dart';
 import 'package:gurukul_app/app/utils/user_prefs.dart';
 
+import '../entity/req_entity/req_accept_reject_request_faimily.dart';
+import '../entity/res_entity/res_get_faimily_request_list.dart';
+
 abstract class ProfileData{
   Future<ResUserBasicDetails> userBasicDetails({CancelToken? cancelToken});
   Future<ResUserBasicDetails> updateUserBasicDetails({String? path,required ResUserBasicDetailsData data});
@@ -34,6 +37,8 @@ abstract class ProfileData{
   Future<ResGetFamilyMemberByUserId> getFamilyMemberByUserId();
   Future<ResEmpty> addFamilyMember({String? path,required FamilyMemberModel family});
   Future<ResEmpty> updateFamilyMember({String? path,required FamilyMemberModel family});
+  Future<ResGetFaimilyRequestList> getFaimilyRequestList();
+  Future<ResEmpty> acceptRejectRequestFaimily({required ReqAcceptRejectRequestFaimily req});
 
 }
 
@@ -269,6 +274,38 @@ class ProfileDataImpl implements ProfileData{
     var formData = FormData.fromMap(family.toJson());
 
     final res = await WebService.shared.postApiDIO(path: ServerConfigs.updateFamilyMember, data: formData,cancelToken: cancelToken);
+
+    try {
+      return ResEmpty.fromJson(res!);
+    } catch (e) {
+      throw '$jsonParserErrorMsg';
+    }
+  }
+
+  @override
+  Future<ResGetFaimilyRequestList> getFaimilyRequestList() async{
+
+    final user = await UserPrefs.shared.getUser;
+
+    final res = await WebService.shared.getApiDIO(path: ServerConfigs.getFaimilyRequestList,queryParameters: {
+      "MobileNo" : user.mobile
+    });
+
+    try {
+      return ResGetFaimilyRequestList.fromJson(res!);
+    } catch (e) {
+      throw '$jsonParserErrorMsg';
+    }
+  }
+
+  @override
+  Future<ResEmpty> acceptRejectRequestFaimily({required ReqAcceptRejectRequestFaimily req}) async{
+
+    final user = await UserPrefs.shared.getUser;
+
+    req.memberID = user.userID;
+
+    final res = await WebService.shared.postApiDIO(path: ServerConfigs.acceptRejectRequestFaimily,data: req.toJson());
 
     try {
       return ResEmpty.fromJson(res!);

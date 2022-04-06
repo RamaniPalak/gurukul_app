@@ -11,6 +11,9 @@ import 'package:gurukul_app/app/data/entity/res_entity/res_get_skill_hobby_by_us
 import 'package:gurukul_app/app/data/entity/res_entity/res_user_basic_details.dart';
 import 'package:gurukul_app/app/utils/enums.dart';
 
+import '../data/entity/req_entity/req_accept_reject_request_faimily.dart';
+import '../data/entity/res_entity/res_get_faimily_request_list.dart';
+
 class ProfileRepository{
 
   final ProfileDataImpl dataSource;
@@ -71,6 +74,14 @@ class ProfileRepository{
   }
   Future<ResEmpty> updateFamilyMember({String? path,required FamilyMemberModel family}) async {
     return await dataSource.updateFamilyMember(family: family,path: path);
+  }
+
+  Future<ResGetFaimilyRequestList> getFaimilyRequestList() async{
+    return await dataSource.getFaimilyRequestList();
+  }
+
+  Future<ResEmpty> acceptRejectRequestFaimily({required ReqAcceptRejectRequestFaimily req}) async{
+    return await dataSource.acceptRejectRequestFaimily(req: req);
   }
 
 }

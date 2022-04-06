@@ -28,6 +28,7 @@ class EditProfileScreen extends BasePage {
 
 class _EditProfileScreenState extends BaseState<EditProfileScreen> {
   DateTime? selectedBirthDate;
+  DateTime? selectedMarriageDate;
 
   PickImage? pickImage;
 
@@ -97,10 +98,11 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
       provider.userData?.genderTypeTerm = genderValues.reverse[this.gender];
       provider.userData?.dateOfBirth = selectedBirthDate?.toIso8601String();
       provider.userData?.bloodGroupTerm = selectedBloodGroup?.termCode;
-      provider.userData?.religionTerm = selectedReligion?.termCode;
+      // provider.userData?.religionTerm = selectedReligion?.termCode;
+      // provider.userData?.castTerm = selectedCast?.termCode;
+      // provider.userData?.subCastTerm = selectedSubCast?.termCode;
       provider.userData?.maritalStatusTerm = selectedMaritalStatus?.termCode;
-      provider.userData?.castTerm = selectedCast?.termCode;
-      provider.userData?.subCastTerm = selectedSubCast?.termCode;
+      provider.userData?.marriageDate = selectedMarriageDate?.toIso8601String();
 
       await provider.updateUserBasicDetails(path: img?.path);
 
@@ -169,59 +171,61 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
       }
     });
 
-    profile.getListTerms(term: TermCategories.Cast_Term).then((value) {
-      if (mounted) {
-        setState(() {
-                this.castList = value;
-
-                try {
-                  this.selectedCast = value?.where((element) {
-                            return element.termCode == data?.castTerm;
-                          }).first;
-
-                } catch (e) {
-                  print(e);
-                  isTermsFetched = true;
-                }finally{
-                  getAndSetSubCast();
-                }
-
-              });
-      }
-    });
+    // NOTE BY KISHAN :- Due to new requirements needed to remove unnecessary API call
+    // profile.getListTerms(term: TermCategories.Cast_Term).then((value) {
+    //   if (mounted) {
+    //     setState(() {
+    //             this.castList = value;
+    //
+    //             try {
+    //               this.selectedCast = value?.where((element) {
+    //                         return element.termCode == data?.castTerm;
+    //                       }).first;
+    //
+    //             } catch (e) {
+    //               print(e);
+    //               isTermsFetched = true;
+    //             }finally{
+    //               getAndSetSubCast();
+    //             }
+    //
+    //           });
+    //   }
+    // });
 
   }
 
-  Future getAndSetSubCast() async {
-
-    final profile = Provider.of<ProfileProviderImpl>(context,listen: false);
-
-    final data = profile.userData;
-
-    if (selectedCast?.termCode != null){
-
-      selectedSubCast = null;
-
-      final subCasts = await profile.getListSubTerms(term: selectedCast?.termCode ?? '');
-
-      final mySubCast = subCasts?.where((element) {
-        return element.termCode == data?.subCastTerm;
-      });
-
-      if (mounted) {
-        setState(() {
-
-                this.subCastList = subCasts;
-                isTermsFetched = true;
-                try {
-                  this.selectedSubCast = mySubCast?.first;
-                } catch (e) {}
-
-              });
-      }
-
-    }
-  }
+  // NOTE BY KISHAN :- Due to new requirements needed to remove unnecessary API call
+  // Future getAndSetSubCast() async {
+  //
+  //   final profile = Provider.of<ProfileProviderImpl>(context,listen: false);
+  //
+  //   final data = profile.userData;
+  //
+  //   if (selectedCast?.termCode != null){
+  //
+  //     selectedSubCast = null;
+  //
+  //     final subCasts = await profile.getListSubTerms(term: selectedCast?.termCode ?? '');
+  //
+  //     final mySubCast = subCasts?.where((element) {
+  //       return element.termCode == data?.subCastTerm;
+  //     });
+  //
+  //     if (mounted) {
+  //       setState(() {
+  //
+  //               this.subCastList = subCasts;
+  //               isTermsFetched = true;
+  //               try {
+  //                 this.selectedSubCast = mySubCast?.first;
+  //               } catch (e) {}
+  //
+  //             });
+  //     }
+  //
+  //   }
+  // }
 
   @override
   void initState() {
@@ -247,6 +251,7 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
         gender = data?.genderType ?? Gender.NONE;
 
         selectedBirthDate = data?.birthDay;
+        selectedMarriageDate = data?.marriageDay;
 
       });
 
@@ -426,11 +431,12 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
                   Container(
                     child: Text('Marital Status', style: kTextBold),
                   ),
+
                   defaultSizedBox(),
 
                   CategoryTypeDropDown(
                     data: maritalStatus ?? [],
-                    hint: 'Religion',
+                    hint: 'Marital Status',
                     selectedValue: selectedMaritalStatus,
                     onChange: (value) {
                       setState(() {
@@ -440,42 +446,21 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
                   ),
 
                   defaultSizedBox(),
-                  Container(
-                    child: Text('Select Cast', style: kTextBold),
-                  ),
-                  defaultSizedBox(),
 
-                  CategoryTypeDropDown(
-                    data: castList ?? [],
-                    hint: 'Select Cast',
-                    selectedValue: selectedCast,
-                    onChange: (value) {
+                  if(selectedMaritalStatus?.termCode == "married")
+                  DatePickView(
+                    minDate: DateTime.now(),
+                    title: selectedMarriageDate == null ? 'Marriage Date' : selectedMarriageDate!.toStrCommonFormat() ,
+                    selectedDate: (date) {
                       setState(() {
-                        selectedCast = value;
-                        this.subCastList = null;
-                      });
-
-                      getAndSetSubCast();
-                    },
-                  ),
-
-                  defaultSizedBox(),
-                  Container(
-                    child: Text('Select Sub Cast', style: kTextBold),
-                  ),
-                  defaultSizedBox(),
-
-                  // if (subCastList != null)
-                  CategoryTypeDropDown(
-                    data: subCastList ?? [],
-                    hint: 'Select Sub Cast',
-                    selectedValue: selectedSubCast,
-                    onChange: (value) {
-                      setState(() {
-                        selectedSubCast = value;
+                        selectedMarriageDate = date;
                       });
                     },
+                    passedDate: selectedMarriageDate,
                   ),
+
+                  // NOTE BY KISHAN :- Due to new requirements needed to remove unnecessary API call
+                  // selectUserCategory(),
 
                   defaultSizedBox(),
                   defaultSizedBox(height: 20.0),
@@ -490,6 +475,50 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
     );
   }
 
+  Column selectUserCategory() {
+    return Column(
+                  children: [
+                    defaultSizedBox(),
+                    Container(
+                      child: Text('Select Cast', style: kTextBold),
+                    ),
+                    defaultSizedBox(),
+
+                    CategoryTypeDropDown(
+                      data: castList ?? [],
+                      hint: 'Select Cast',
+                      selectedValue: selectedCast,
+                      onChange: (value) {
+                        setState(() {
+                          selectedCast = value;
+                          this.subCastList = null;
+                        });
+                        // NOTE BY KISHAN :- Due to new requirements needed to remove unnecessary API call
+                        // getAndSetSubCast();
+                      },
+                    ),
+
+                    defaultSizedBox(),
+                    Container(
+                      child: Text('Select Sub Cast', style: kTextBold),
+                    ),
+                    defaultSizedBox(),
+
+                    // if (subCastList != null)
+                    CategoryTypeDropDown(
+                      data: subCastList ?? [],
+                      hint: 'Select Sub Cast',
+                      selectedValue: selectedSubCast,
+                      onChange: (value) {
+                        setState(() {
+                          selectedSubCast = value;
+                        });
+                      },
+                    ),
+                  ],
+                );
+  }
+
   Widget updateProfileButtonConsumer() {
 
     return Consumer<ProfileProviderImpl>(builder: (_, profile, __) {
@@ -500,7 +529,7 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
         title: 'SAVE',
         isLoading: isLoading,
         onTap: () {
-          if(!isTermsFetched){return;}
+          // if(!isTermsFetched){return;}
           if(isLoading){return;}
           updateProfile();
         },

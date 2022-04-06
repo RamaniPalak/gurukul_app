@@ -56,40 +56,46 @@ class _SideMenuScreenState extends BaseState<SideMenuScreen> {
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            color: kPrimaryColor,
-            child: Padding(
-              padding: EdgeInsets.only(
-                  top: kFlexibleSize(30), bottom: kFlexibleSize(15)),
-              child: SafeArea(
-                bottom: false,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                        height: kFlexibleSize(80),
-                        width: kFlexibleSize(80),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: CustomNetWorkImage(url: ServerConfigs.imageBaseURL + (user?.image ?? '')),
-                        )),
-                    defaultSizeBoxHeight(height: 5),
-                    Text(
-                      '${user?.fullName ?? ''}',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: kMediumFontSize,
-                          fontWeight: FontWeight.w700),
-                    ),
-                    defaultSizeBoxHeight(height: 5),
-                    prefixTitle('${user?.mobile ?? ''}', callIconImageWhite,
-                        color: Colors.white),
-                    defaultSizeBoxHeight(height: 5),
-                    prefixTitle('${user?.email ?? ''}', mailIconImageWhite,
-                        color: Colors.white),
-                  ],
+          InkWell(
+            onTap: (){
+              Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(kProfileScreenRoute);
+            },
+            child: Container(
+              width: double.infinity,
+              color: kPrimaryColor,
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: kFlexibleSize(30), bottom: kFlexibleSize(15)),
+                child: SafeArea(
+                  bottom: false,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                          height: kFlexibleSize(80),
+                          width: kFlexibleSize(80),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: CustomNetWorkImage(url: ServerConfigs.imageBaseURL + (user?.image ?? '')),
+                          )),
+                      defaultSizeBoxHeight(height: 5),
+                      Text(
+                        '${user?.fullName ?? ''}',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: kMediumFontSize,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      defaultSizeBoxHeight(height: 5),
+                      prefixTitle('${user?.mobile ?? ''}', callIconImageWhite,
+                          color: Colors.white),
+                      defaultSizeBoxHeight(height: 5),
+                      prefixTitle('${user?.email ?? ''}', mailIconImageWhite,
+                          color: Colors.white),
+                    ],
+                  ),
                 ),
               ),
             ),

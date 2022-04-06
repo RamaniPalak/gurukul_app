@@ -9,11 +9,13 @@ Color kFontColor = Color(0xff000000);
 //Routes
 String kInitialRoute = '/';
 String kLoginRoute = '/LoginScreen';
-String kHomeRoute = '/HomeScreen';
+String kProfileScreenRoute = '/ProfileScreen';
 String kEnterMobileRoute = '/EnterMobileScreen';
 String kEnterOTPRoute = '/EnterOTPScreen';
 String kSignupRoute = '/SignupScreen';
 String kForgotPasswordRoute = '/ForgotPasswordScreen';
+String kNikolGurukulFormRoute = '/NikolGurukulForm';
+String kNewsListScreenRoute = '/NewsListScreen';
 
 //FontFamily
 String kRegularFonts = "Mulish";

@@ -1,6 +1,7 @@
 class ServerConfigs{
 
-  static String domain = 'gurukulparivar.softcube.co.in';
+  static String domain = '192.168.1.125:3000';
+  // static String domain = 'gurukulparivar.softcube.co.in';
   static String baseURL = 'http://$domain/api/v1/';
   static String imageBaseURL = 'http://$domain/';
   static String userLogin = 'userLogin';
@@ -29,4 +30,6 @@ class ServerConfigs{
   static String updateFamilyMember = 'updateFamilyMember';
   static String getCmsPages = 'getCmsPages';
   static String getCurrentVersion = 'getCurrentVersion';
+  static String getFaimilyRequestList = 'getFaimilyRequestList';
+  static String acceptRejectRequestFaimily = 'acceptRejectRequestFaimily';
 }

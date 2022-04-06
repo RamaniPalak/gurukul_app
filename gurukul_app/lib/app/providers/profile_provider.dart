@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:gurukul_app/app/data/entity/req_entity/req_update_hobby_skill_by_user_id.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_empty.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_ge_profession_detail.dart';
@@ -16,31 +17,45 @@ import 'package:gurukul_app/app/utils/enums.dart';
 import 'package:gurukul_app/app/utils/extensions.dart';
 import 'package:gurukul_app/app/utils/messages.dart';
 import 'package:gurukul_app/app/utils/user_prefs.dart';
+import 'package:provider/provider.dart';
+
+import '../data/entity/req_entity/req_accept_reject_request_faimily.dart';
+import '../data/entity/res_entity/res_get_faimily_request_list.dart';
 
 class ProfileProvider {
   Future userBasicDetails() async {}
+
   Future updateUserBasicDetails({String? path}) async {}
 
   Future getAddress({required AddressType addressType}) async {}
+
   Future updateAddress() async {}
 
   Future getProfessionDetail() async {}
+
   Future updateProfessionDetail() async {}
 
   Future addUserGurukul() async {}
+
   Future getGurukulList({required bool isForAll}) async {}
 
-  Future getSkillHobbyByUserId() async{}
+  Future getSkillHobbyByUserId() async {}
+
   Future updateHobbySkillByUserId() async {}
 
-  Future getFamilyMemberByUserId() async{}
-  Future addFamilyMember({String? path}) async {}
-}
+  Future getFamilyMemberByUserId() async {}
 
+  Future addFamilyMember({String? path}) async {}
+
+  Future getFaimilyRequestList() async {}
+
+  Future acceptRejectRequestFaimily({required int familyID, required String status, String? term}) async {}
+}
 
 class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
 
   CancelToken cancelToken = CancelToken();
+
   get cancelableRequest => cancelToken.cancel();
 
   late ProfileRepository repo;
@@ -48,7 +63,7 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
 
   AddressType addressTypeEditing = AddressType.CURRENT;
 
-  ProfileProviderImpl(this.repo,this.service){
+  ProfileProviderImpl(this.repo, this.service) {
     _userRes = ApiResponse();
     _updatedUserRes = ApiResponse();
     _currentAddressRes = ApiResponse();
@@ -62,6 +77,8 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
     _updateHobbiesAndSkill = ApiResponse();
     _familyMembers = ApiResponse();
     _updateFamily = ApiResponse();
+    _familyPendingList = ApiResponse();
+    _familyReq = ApiResponse();
   }
 
   //Api Obj
@@ -75,7 +92,7 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
 
   ResUserBasicDetailsData? userData;
 
-  fillUserData({ResUserBasicDetailsData? userData}){
+  fillUserData({ResUserBasicDetailsData? userData}) {
     this.userData = ResUserBasicDetailsData.fill(user: userData);
   }
 
@@ -94,11 +111,19 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
 
   ApiResponse<ResEmpty>? get updatedAddress => _updatedAddress;
 
+  ApiResponse<ResGetFaimilyRequestList>? _familyPendingList;
+
+  ApiResponse<ResGetFaimilyRequestList>? get familyPendingList => _familyPendingList;
+
+  ApiResponse<ResEmpty>? _familyReq;
+
+  ApiResponse<ResEmpty>? get familyReq => _familyReq;
+
   ResGetAddressData? permanentAddressData;
 
   ResGetAddressData? editingAddressObject;
 
-  fillAddress({required ResGetAddressData? address}){
+  fillAddress({required ResGetAddressData? address}) {
     editingAddressObject = ResGetAddressData.fill(address: address);
   }
 
@@ -123,7 +148,6 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
     this.gurukulModel = GurukulModel.fill(gurukul);
   }
 
-
   ApiResponse<ResEmpty>? _updateGurukul;
 
   ApiResponse<ResEmpty>? get updateGurukul => _updateGurukul;
@@ -135,7 +159,8 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
   //Hobbies Obj
   ApiResponse<ResGetSkillHobbyByUserId>? _hobbiesAndSkill;
 
-  ApiResponse<ResGetSkillHobbyByUserId>? get hobbiesAndSkill => _hobbiesAndSkill;
+  ApiResponse<ResGetSkillHobbyByUserId>? get hobbiesAndSkill =>
+      _hobbiesAndSkill;
 
   ApiResponse<ResEmpty>? _updateHobbiesAndSkill;
 
@@ -148,7 +173,7 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
 
   FamilyMemberModel familyMember = FamilyMemberModel();
 
-  finnFamilyMember({required FamilyMemberModel family}){
+  finnFamilyMember({required FamilyMemberModel family}) {
     familyMember = FamilyMemberModel.fill(family);
   }
 
@@ -158,84 +183,80 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
 
   bool isFamilyUpdating = false;
 
-
   @override
   Future userBasicDetails() async {
-
-    try{
+    try {
       apiResIsLoading(_userRes!);
 
       final res = await repo.userBasicDetails(cancelToken: cancelToken);
 
-      if(res.status == 0){
+      if (res.status == 0) {
         apiResIsFailed(_userRes!, res.message ?? '');
-      }else if(res.status == 2){
+      } else if (res.status == 2) {
         apiResIsUnAuthorise(_userRes!, res.message ?? '');
-      }else{
+      } else {
         //Success
         // userData = res.data;
         fillUserData(userData: res.data);
         apiResIsSuccess(_userRes!, res);
       }
-
-    }catch(e){
+    } catch (e) {
       print(e);
       apiResIsFailed(_userRes!, e);
     }
-
   }
 
   @override
   Future updateUserBasicDetails({String? path}) async {
-    try{
-
-      if(userData != null){
-        if (
-            userData?.firstName == null||
-            userData?.middleName == null||
-            userData?.lastName == null||
-            userData?.whatsAppNo == null||
-            userData?.email == null||
-            userData?.birthDay == null||
-            userData?.genderType == null||
-            userData?.bloodGroupTerm == null||
-            userData?.religionTerm == null||
-            userData?.maritalStatusTerm == null||
-            userData?.castTerm == null||
-            userData?.subCastTerm == null ||
-            userData!.firstName!.isEmpty ||
-            userData!.middleName!.isEmpty ||
-            userData!.lastName!.isEmpty ||
-            userData!.whatsAppNo!.isEmpty ||
-            userData!.email!.isEmpty ||
-            userData?.birthDay == null ||
-            userData!.genderType! == Gender.NONE ||
-            userData!.bloodGroupTerm!.isEmpty ||
-            userData!.religionTerm!.isEmpty ||
-            userData!.maritalStatusTerm!.isEmpty ||
-            userData!.castTerm!.isEmpty ||
-            userData!.subCastTerm!.isEmpty
-        ) {
+    try {
+      if (userData != null) {
+        if (userData?.firstName == null ||
+                userData?.middleName == null ||
+                userData?.lastName == null ||
+                userData?.whatsAppNo == null ||
+                userData?.email == null ||
+                userData?.birthDay == null ||
+                userData?.genderType == null ||
+                userData?.bloodGroupTerm == null ||
+                userData?.maritalStatusTerm == null ||
+                userData!.firstName!.isEmpty ||
+                userData!.middleName!.isEmpty ||
+                userData!.lastName!.isEmpty ||
+                userData!.whatsAppNo!.isEmpty ||
+                userData!.email!.isEmpty ||
+                userData?.birthDay == null ||
+                userData!.genderType! == Gender.NONE ||
+                userData!.bloodGroupTerm!.isEmpty ||
+                userData!.maritalStatusTerm!.isEmpty
+            // NOTE BY KISHAN :- Due to new requirements needed to remove unnecessary API call
+            // userData?.religionTerm == null||
+            // userData?.castTerm == null||
+            // userData?.subCastTerm == null ||
+            //     userData!.religionTerm!.isEmpty ||
+            // userData!.castTerm!.isEmpty ||
+            // userData!.subCastTerm!.isEmpty
+            ) {
           throw emptyFieldsMsg;
         }
 
-        if(!userData!.whatsAppNo!.isValidMobile){
+        if (!userData!.whatsAppNo!.isValidMobile) {
           throw 'Please enter valid whatsapp number.';
         }
 
-        if(!userData!.email!.isValidEmail){
+        if (!userData!.email!.isValidEmail) {
           throw 'Please enter valid Email Address.';
         }
 
         apiResIsLoading(_updatedUserRes!);
 
-        final res = await repo.updateUserBasicDetails(data: userData!,path: path);
+        final res =
+            await repo.updateUserBasicDetails(data: userData!, path: path);
 
-        if(res.status == 0){
+        if (res.status == 0) {
           apiResIsFailed(_updatedUserRes!, res.message ?? '');
-        }else if(res.status == 2){
+        } else if (res.status == 2) {
           apiResIsUnAuthorise(_updatedUserRes!, res.message ?? '');
-        }else{
+        } else {
           apiResIsSuccess(_updatedUserRes!, res);
           userBasicDetails();
 
@@ -245,19 +266,28 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
 
           UserPrefs.shared.setLocalData(user: LocalUser(userID: localUser.userID, fullName: res.data?.fullName ?? '', mobile: localUser.mobile, image: res.data?.profilePic ?? '', token: localUser.token, isLogin: localUser.isLogin, email: res.data?.email ?? ''));
 
-        }
 
-      }else{
+          UserPrefs.shared.setLocalData(
+              user: LocalUser(
+                  userID: localUser.userID,
+                  fullName: res.data?.fullName ?? '',
+                  mobile: localUser.mobile,
+                  image: res.data?.profilePic ?? '',
+                  token: localUser.token,
+                  isLogin: localUser.isLogin,
+                  email: res.data?.email ?? ''));
+        }
+      } else {
         throw 'User Data Not Found';
       }
-
-    }catch(e){
+    } catch (e) {
       print(e);
       apiResIsFailed(_updatedUserRes!, e);
     }
   }
 
-  Future<List<ResGetTypeTermListElement>?> getListTerms({required TermCategories term}) async {
+  Future<List<ResGetTypeTermListElement>?> getListTerms(
+      {required TermCategories term}) async {
     try {
       return await service.getTypeTerms(term: term);
     } catch (e) {
@@ -265,7 +295,8 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
     }
   }
 
-  Future<List<ResGetTypeTermListElement>?> getListSubTerms({required String term}) async {
+  Future<List<ResGetTypeTermListElement>?> getListSubTerms(
+      {required String term}) async {
     try {
       return await service.getSubTerm(term: term);
     } catch (e) {
@@ -274,57 +305,57 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
   }
 
   @override
-  Future getAddress({required AddressType addressType}) async{
+  Future getAddress({required AddressType addressType}) async {
     final bool isCurrent = addressType == AddressType.CURRENT;
     addressTypeEditing = addressType;
     try {
-
       apiResIsLoading(isCurrent ? _currentAddressRes! : _permanentAddressRes!);
 
       final res = await repo.getAddress(addressType: addressType);
 
-      if(res.status == 0){
-        apiResIsSuccess(isCurrent ? _currentAddressRes! : _permanentAddressRes!, res);
-      }else if(res.status == 2){
-        apiResIsUnAuthorise(isCurrent ? _currentAddressRes! : _permanentAddressRes!, res.message ?? '');
-      }else{
+      if (res.status == 0) {
+        apiResIsSuccess(
+            isCurrent ? _currentAddressRes! : _permanentAddressRes!, res);
+      } else if (res.status == 2) {
+        apiResIsUnAuthorise(
+            isCurrent ? _currentAddressRes! : _permanentAddressRes!,
+            res.message ?? '');
+      } else {
         //Success
-        if(isCurrent){
+        if (isCurrent) {
           this.currentAddressData = res.data;
-        }else{
+        } else {
           this.permanentAddressData = res.data;
         }
-        apiResIsSuccess(isCurrent ? _currentAddressRes! : _permanentAddressRes!, res);
+        apiResIsSuccess(
+            isCurrent ? _currentAddressRes! : _permanentAddressRes!, res);
       }
     } catch (e) {
-      apiResIsFailed(isCurrent ? _currentAddressRes! : _permanentAddressRes!, e);
+      apiResIsFailed(
+          isCurrent ? _currentAddressRes! : _permanentAddressRes!, e);
     }
-
   }
 
   @override
   Future updateAddress() async {
     try {
-
-      if(editingAddressObject == null){
+      if (editingAddressObject == null) {
         throw 'No Address Found';
       }
-
 
       if (editingAddressObject?.address1 == null ||
           editingAddressObject?.address2 == null ||
           editingAddressObject?.landMark1 == null ||
-          editingAddressObject?.landMark2 == null ||
+          editingAddressObject?.area == null ||
           editingAddressObject?.pinCode == null ||
           editingAddressObject?.phoneNo == null ||
           editingAddressObject?.state == null ||
           editingAddressObject?.city == null ||
           editingAddressObject?.country == null ||
-
           editingAddressObject!.address1!.isEmpty ||
           editingAddressObject!.address2!.isEmpty ||
           editingAddressObject!.landMark1!.isEmpty ||
-          editingAddressObject!.landMark2!.isEmpty ||
+          editingAddressObject!.area!.isEmpty ||
           editingAddressObject!.pinCode!.isEmpty ||
           editingAddressObject!.phoneNo!.isEmpty ||
           editingAddressObject!.state!.isEmpty ||
@@ -333,25 +364,26 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
         throw emptyFieldsMsg;
       }
 
-      if(!editingAddressObject!.phoneNo!.isValidMobile){
+      if (!editingAddressObject!.phoneNo!.isValidMobile) {
         throw 'Please enter valid mobile number.';
       }
 
-      if(editingAddressObject!.pinCode!.length > 6){
+      if (editingAddressObject!.pinCode!.length > 6) {
         throw 'Please enter valid pin number.';
       }
 
       apiResIsLoading(_updatedAddress!);
 
-      editingAddressObject!.addressTypeTerm = addressValues.reverse[addressTypeEditing];
+      editingAddressObject!.addressTypeTerm =
+          addressValues.reverse[addressTypeEditing];
 
       final res = await repo.updateAddress(data: editingAddressObject!);
 
-      if(res.status == 0){
+      if (res.status == 0) {
         apiResIsFailed(_updatedAddress!, res.message ?? '');
-      }else if(res.status == 2){
+      } else if (res.status == 2) {
         apiResIsUnAuthorise(_updatedAddress!, res.message ?? '');
-      }else{
+      } else {
         apiResIsSuccess(_updatedAddress!, res);
 
         getAddress(addressType: addressTypeEditing);
@@ -360,25 +392,24 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
       print(e);
       apiResIsFailed(_updatedAddress!, e);
     }
-
   }
 
   @override
-  Future getProfessionDetail() async{
-    try{
+  Future getProfessionDetail() async {
+    try {
       apiResIsLoading(_occupation!);
 
       final res = await repo.getProfessionDetail();
 
-      if(res.status == 0){
+      if (res.status == 0) {
         apiResIsFailed(_occupation!, res.message ?? '');
-      }else if(res.status == 2){
+      } else if (res.status == 2) {
         apiResIsUnAuthorise(_occupation!, res.message ?? '');
-      }else{
+      } else {
         //Success
         apiResIsSuccess(_occupation!, res);
       }
-    }catch(e){
+    } catch (e) {
       print(e);
       apiResIsFailed(_occupation!, e);
     }
@@ -386,15 +417,14 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
 
   @override
   Future updateProfessionDetail() async {
-    try{
-
+    try {
       if (occupationData.occupationTerm == null) {
         throw emptyFieldsMsg;
-      }else if (occupationData.occupationTerm == 'job'){
+      } else if (occupationData.occupationTerm == 'job') {
         if (occupationData.jobTypeTerm == null) {
           throw emptyFieldsMsg;
         }
-      }else if (occupationData.occupationTerm == 'business'){
+      } else if (occupationData.occupationTerm == 'business') {
         if (occupationData.industryTypeTerm == null) {
           throw emptyFieldsMsg;
         }
@@ -404,16 +434,16 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
 
       final res = await repo.updateProfessionDetail(data: occupationData);
 
-      if(res.status == 0){
+      if (res.status == 0) {
         apiResIsFailed(_updateOccupation!, res.message ?? '');
-      }else if(res.status == 2){
+      } else if (res.status == 2) {
         apiResIsUnAuthorise(_updateOccupation!, res.message ?? '');
-      }else{
+      } else {
         //Success
         apiResIsSuccess(_updateOccupation!, res);
         getProfessionDetail();
       }
-    }catch(e){
+    } catch (e) {
       print(e);
       apiResIsFailed(_updateOccupation!, e);
     }
@@ -421,32 +451,32 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
 
   @override
   Future addUserGurukul() async {
-
     try {
-
-      if(gurukulModel.gurukulId == null || gurukulModel.startYear == null || gurukulModel.endYear == null || gurukulModel.purposeTypeTerm == null) {
+      if (gurukulModel.gurukulId == null ||
+          gurukulModel.startYear == null ||
+          gurukulModel.endYear == null ||
+          gurukulModel.purposeTypeTerm == null) {
         throw emptyFieldsMsg;
-      }else{
-        if(gurukulModel.purposeTypeTerm == 'education'){
-          if(gurukulModel.standardDivisionTerm == null || gurukulModel.admissionStandardTerm == null){
+      } else {
+        if (gurukulModel.purposeTypeTerm == 'paststudent') {
+          if (gurukulModel.standardDivisionTerm == null ||
+              gurukulModel.admissionStandardTerm == null) {
             throw emptyFieldsMsg;
           }
         }
       }
 
-      if((gurukulModel.startYear?.microsecondsSinceEpoch ?? 0) >= (gurukulModel.endYear?.microsecondsSinceEpoch ?? 0)){
+      if ((gurukulModel.startYear?.microsecondsSinceEpoch ?? 0) >=
+          (gurukulModel.endYear?.microsecondsSinceEpoch ?? 0)) {
         throw 'Start date should be higher';
       }
 
-
-
       apiResIsLoading(_updateGurukul!);
 
-      if(isGurukulUpdating){
-
+      if (isGurukulUpdating) {
         final res = await repo.updateGurukulForId(data: gurukulModel);
 
-        if(res.status == 0){
+        if (res.status == 0) {
           apiResIsFailed(_updateGurukul!, res.message ?? '');
         } else if (res.status == 2) {
           apiResIsUnAuthorise(_updateGurukul!, res.message ?? '');
@@ -455,11 +485,10 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
           apiResIsSuccess(_updateGurukul!, res);
           getGurukulList(isForAll: true);
         }
-      }else{
-
+      } else {
         final res = await repo.addUserGurukul(data: gurukulModel);
 
-        if(res.status == 0){
+        if (res.status == 0) {
           apiResIsFailed(_updateGurukul!, res.message ?? '');
         } else if (res.status == 2) {
           apiResIsUnAuthorise(_updateGurukul!, res.message ?? '');
@@ -469,17 +498,14 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
           getGurukulList(isForAll: true);
         }
       }
-
     } catch (e) {
       print(e);
       apiResIsFailed(_updateGurukul!, e);
     }
-
   }
 
   @override
   Future getGurukulList({required bool isForAll}) async {
-
     try {
       apiResIsLoading(_gurukulLists!);
 
@@ -499,7 +525,7 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
   }
 
   @override
-  Future getSkillHobbyByUserId() async{
+  Future getSkillHobbyByUserId() async {
     try {
       apiResIsLoading(_hobbiesAndSkill!);
 
@@ -512,7 +538,6 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
       } else {
         //Success
         apiResIsSuccess(_hobbiesAndSkill!, res);
-
       }
     } catch (e) {
       apiResIsFailed(_hobbiesAndSkill!, e);
@@ -520,7 +545,7 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
   }
 
   @override
-  Future updateHobbySkillByUserId() async{
+  Future updateHobbySkillByUserId() async {
     try {
       apiResIsLoading(_updateHobbiesAndSkill!);
 
@@ -530,15 +555,19 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
       List<String> skills = [];
 
       hobbiesAndSkill?.data?.data?.hobby?.forEach((element) {
-        if(element.isSelected == 1){hobbies.add(element.code ?? '');}
-
+        if (element.isSelected == 1) {
+          hobbies.add(element.code ?? '');
+        }
       });
 
       hobbiesAndSkill?.data?.data?.skill?.forEach((element) {
-        if(element.isSelected == 1){skills.add(element.code ?? '');}
+        if (element.isSelected == 1) {
+          skills.add(element.code ?? '');
+        }
       });
 
-      final data = ReqUpdateHobbySkillByUserId(memberId: user.userID, updateSkill: skills, updateHobby: hobbies);
+      final data = ReqUpdateHobbySkillByUserId(
+          memberId: user.userID, updateSkill: skills, updateHobby: hobbies);
 
       final res = await repo.updateHobbySkillByUserId(data: data);
 
@@ -554,7 +583,6 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
     } catch (e) {
       apiResIsFailed(_updateHobbiesAndSkill!, e);
     }
-
   }
 
   @override
@@ -571,7 +599,6 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
       } else {
         //Success
         apiResIsSuccess(_familyMembers!, res);
-
       }
     } catch (e) {
       apiResIsFailed(_familyMembers!, e);
@@ -579,12 +606,11 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
   }
 
   @override
-  Future addFamilyMember({String? path}) async{
+  Future addFamilyMember({String? path}) async {
     try {
       print(familyMember.toJson());
 
-      if (
-          familyMember.firstName == null ||
+      if (familyMember.firstName == null ||
           familyMember.middleName == null ||
           familyMember.lastName == null ||
           familyMember.mobileNo == null ||
@@ -595,8 +621,7 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
           familyMember.lastName!.isEmpty ||
           familyMember.mobileNo!.isEmpty ||
           familyMember.relationTypeTerm!.isEmpty ||
-          familyMember.occupationTerm!.isEmpty
-      ) {
+          familyMember.occupationTerm!.isEmpty) {
         throw emptyFieldsMsg;
       }
 
@@ -630,6 +655,52 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
     } catch (e) {
       print(e);
       apiResIsFailed(_updateFamily!, e);
+    }
+  }
+
+  @override
+  Future getFaimilyRequestList() async {
+
+    try {
+      apiResIsLoading(_familyPendingList!);
+
+      final res = await repo.getFaimilyRequestList();
+
+      if (res.status == 0) {
+        apiResIsFailed(_familyPendingList!, res.message ?? '');
+      } else {
+        apiResIsSuccess(_familyPendingList!, res);
+      }
+
+    } catch (e) {
+      print(e);
+      apiResIsFailed(_familyPendingList!, e);
+    }
+
+  }
+
+  @override
+  Future acceptRejectRequestFaimily({required int familyID, required String status,String? term}) async {
+
+    try {
+      apiResIsLoading(_familyReq!);
+
+      final res = await repo.acceptRejectRequestFaimily(req: ReqAcceptRejectRequestFaimily(
+        memberFamilyID: familyID,
+        status: status,
+        relation: term
+      ));
+
+      if (res.status == 0) {
+        apiResIsFailed(_familyReq!, res.message ?? '');
+      } else {
+        apiResIsSuccess(_familyReq!, res);
+        getFaimilyRequestList();
+      }
+
+    } catch (e) {
+      print(e);
+      apiResIsFailed(_familyReq!, e);
     }
   }
 }

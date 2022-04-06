@@ -29,7 +29,7 @@ class _EditAddressScreenState extends BaseState<EditAddressScreen> {
   TextEditingController address1Controller = TextEditingController();
   TextEditingController address2Controller = TextEditingController();
   TextEditingController landMark1Controller = TextEditingController();
-  TextEditingController landMark2Controller = TextEditingController();
+  TextEditingController areaController = TextEditingController();
   TextEditingController pinCodeController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
 
@@ -100,7 +100,7 @@ class _EditAddressScreenState extends BaseState<EditAddressScreen> {
        // if (editingAddressObject?.address1 == null ||
        //          editingAddressObject?.address2 == null ||
        //          editingAddressObject?.landMark1 == null ||
-       //          editingAddressObject?.landMark2 == null ||
+       //          editingAddressObject?.area == null ||
        //          editingAddressObject?.pinCode == null ||
        //          editingAddressObject?.phoneNo == null ||
        //          editingAddressObject?.state == null ||
@@ -109,7 +109,7 @@ class _EditAddressScreenState extends BaseState<EditAddressScreen> {
        //          editingAddressObject!.address1!.isEmpty ||
        //          editingAddressObject.address2!.isEmpty ||
        //          editingAddressObject.landMark1!.isEmpty ||
-       //          editingAddressObject.landMark2!.isEmpty ||
+       //          editingAddressObject.area!.isEmpty ||
        //          editingAddressObject.pinCode!.isEmpty ||
        //          editingAddressObject.phoneNo!.isEmpty ||
        //          editingAddressObject.state!.isEmpty ||
@@ -132,7 +132,7 @@ class _EditAddressScreenState extends BaseState<EditAddressScreen> {
        editingAddressObject?.address1 = address1Controller.text;
        editingAddressObject?.address2 = address2Controller.text;
        editingAddressObject?.landMark1 = landMark1Controller.text;
-       editingAddressObject?.landMark2 = landMark2Controller.text;
+       editingAddressObject?.area = areaController.text;
        editingAddressObject?.pinCode = pinCodeController.text;
        editingAddressObject?.phoneNo = phoneController.text;
 
@@ -166,7 +166,7 @@ class _EditAddressScreenState extends BaseState<EditAddressScreen> {
         address1Controller.text = data?.address1 ?? '';
         address2Controller.text = data?.address2 ?? '';
         landMark1Controller.text = data?.landMark1 ?? '';
-        landMark2Controller.text = data?.landMark2 ?? '';
+        areaController.text = data?.area ?? '';
         pinCodeController.text = data?.pinCode ?? '';
         phoneController.text = data?.phoneNo ?? '';
 
@@ -202,16 +202,16 @@ class _EditAddressScreenState extends BaseState<EditAddressScreen> {
             children: [
               SizedBox(height: kFlexibleSize(20.0)),
               BaseTextField(
-                  hint: 'Address 1', keyboardType: TextInputType.text,controller: address1Controller,),
+                  hint: 'House/No', keyboardType: TextInputType.text,controller: address1Controller,),
               defaultSizedBox(),
               BaseTextField(
-                  hint: 'Address 2', keyboardType: TextInputType.text,controller: address2Controller,),
+                  hint: 'Society/Apartment', keyboardType: TextInputType.text,controller: address2Controller,),
               defaultSizedBox(),
               BaseTextField(
-                  hint: 'LandMark 1', keyboardType: TextInputType.text,controller: landMark1Controller,),
+                  hint: 'LandMark', keyboardType: TextInputType.text,controller: landMark1Controller,),
               defaultSizedBox(),
               BaseTextField(
-                  hint: 'LandMark 2', keyboardType: TextInputType.text,controller: landMark2Controller,),
+                  hint: 'Area', keyboardType: TextInputType.text,controller: areaController,),
               defaultSizedBox(),
               BaseTextField(
                   hint: 'Pincode', keyboardType: TextInputType.number,controller: pinCodeController,),

@@ -44,7 +44,8 @@ class ResUserBasicDetailsData {
     this.maritalStatusTitle,
     this.religionTitle,
     this.subCastTitle,
-    this.religionTerm
+    this.religionTerm,
+    this.marriageDate
   });
 
   int? id;
@@ -56,6 +57,7 @@ class ResUserBasicDetailsData {
   String? mobile;
   String? whatsAppNo;
   String? dateOfBirth;
+  String? marriageDate;
   String? genderTypeTerm;
   String? bloodGroupTerm;
   String? maritalStatusTerm;
@@ -114,6 +116,14 @@ class ResUserBasicDetailsData {
     }
   }
 
+  DateTime? get marriageDay{
+    try{
+      return DateTime.parse(marriageDate ?? '');
+    }catch(e){
+      return null;
+    }
+  }
+
   factory ResUserBasicDetailsData.fromJson(Map<String, dynamic> json) => ResUserBasicDetailsData(
     profilePic: json["ProfilePic"] == null ? null : json["ProfilePic"],
     firstName: json["FirstName"] == null ? null : json["FirstName"],
@@ -122,6 +132,7 @@ class ResUserBasicDetailsData {
     email: json["Email"] == null ? null : json["Email"],
     whatsAppNo: json["WhatsAppNo"] == null ? null : json["WhatsAppNo"],
     dateOfBirth: json["DateOfBirth"] == null ? null : json["DateOfBirth"],
+    marriageDate: json["anniversary_date"] == null ? null : json["anniversary_date"],
     genderTypeTerm: json["GenderType_Term"] == null ? null : json["GenderType_Term"],
     bloodGroupTerm: json["BloodGroup_Term"] == null ? null : json["BloodGroup_Term"],
     maritalStatusTerm: json["MaritalStatus_Term"] == null ? null : json["MaritalStatus_Term"],
@@ -146,6 +157,7 @@ class ResUserBasicDetailsData {
     "Email": email,
     "WhatsAppNo": whatsAppNo,
     "DateOfBirth": dateOfBirth,
+    "anniversary_date": marriageDate,
     "GenderType_Term": genderTypeTerm,
     "BloodGroup_Term": bloodGroupTerm,
     "MaritalStatus_Term": maritalStatusTerm,
@@ -163,6 +175,7 @@ class ResUserBasicDetailsData {
     email: user?.email,
     whatsAppNo: user?.whatsAppNo,
     dateOfBirth: user?.dateOfBirth,
+    marriageDate: user?.marriageDate,
     genderTypeTerm: user?.genderTypeTerm,
     bloodGroupTerm: user?.bloodGroupTerm,
     maritalStatusTerm: user?.maritalStatusTerm,

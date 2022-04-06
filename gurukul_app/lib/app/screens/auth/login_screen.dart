@@ -71,19 +71,21 @@ class _LoginScreenState extends State<LoginScreen> {
               BaseTextField(hint: 'Mobile Number',keyboardType: TextInputType.phone,controller: mobileField,),
               SizedBox(height: kFlexibleSize(10.0)),
               BaseTextField(hint: 'Password',keyboardType: TextInputType.visiblePassword,secureText: true,isLast: true,controller: passwordField,),
-              SizedBox(height: kFlexibleSize(10.0)),
               InkWell(
                 onTap: (){
                   auth.isUpdatingPassword = true;
                   Navigator.of(context).pushNamed(kEnterMobileRoute);
                 },
-                child: Text('Forgot Password?',style: TextStyle(
-                  color: kPrimaryColor,
-                  fontSize: kSmallFontSize,
-                  fontWeight: FontWeight.w600,
-                ),textAlign: TextAlign.end),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text('Forgot Password?',style: TextStyle(
+                    color: kPrimaryColor,
+                    fontSize: kSmallFontSize,
+                    fontWeight: FontWeight.w600,
+                  ),textAlign: TextAlign.end),
+                ),
               ),
-              SizedBox(height: kFlexibleSize(30.0)),
+              SizedBox(height: kFlexibleSize(10.0)),
               loginConsumer(context),
               SizedBox(height: kFlexibleSize(80.0)),
               Row(

@@ -38,7 +38,7 @@ class GurukulComponent extends StatelessWidget {
         keyValueComponent(
             key: 'Purpose', value: '${gurukul.purposeText ?? ''}', isCenter: false),
         defaultSizeBoxHeight(height: 5),
-        if(gurukul.purposeTypeStr == 'education')
+        if(gurukul.purposeTypeStr == 'paststudent')
         Column(
           children: [
             keyValueComponent(

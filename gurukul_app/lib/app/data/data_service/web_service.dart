@@ -22,7 +22,7 @@ class WebService{
 
       print('queryParam: $req');
 
-      Response<Map<String, dynamic>> cool = await dio.get<Map<String, dynamic>>(ServerConfigs.baseURL + path,queryParameters: queryParameters,cancelToken: cancelToken);
+      Response<Map<String, dynamic>> cool = await dio.get<Map<String, dynamic>>(ServerConfigs.baseURL + path,queryParameters: queryParameters,cancelToken: cancelToken,);
 
       print('Res: $cool');
 

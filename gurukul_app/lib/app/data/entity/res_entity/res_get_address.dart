@@ -36,7 +36,7 @@ class ResGetAddressData {
     this.phoneNo,
     this.addressTypeTerm,
     this.associationTypeTerm,
-    this.landMark2,
+    this.area,
   });
 
   int? userID;
@@ -51,7 +51,7 @@ class ResGetAddressData {
   String? phoneNo;
   String? addressTypeTerm;
   String? associationTypeTerm;
-  String? landMark2;
+  String? area;
 
   factory ResGetAddressData.fromJson(Map<String, dynamic> json) => ResGetAddressData(
     addressId: json["AddressID"] == null ? null : json["AddressID"],
@@ -65,7 +65,7 @@ class ResGetAddressData {
     phoneNo: json["PhoneNo"] == null ? null : json["PhoneNo"],
     addressTypeTerm: json["AddressType_Term"] == null ? null : json["AddressType_Term"],
     associationTypeTerm: json["AssociationType_Term"] == null ? null : json["AssociationType_Term"],
-    landMark2: json["LandMark2"] == null ? null : json["LandMark2"],
+    area: json["Area"] == null ? null : json["Area"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -80,7 +80,7 @@ class ResGetAddressData {
     "PhoneNo": phoneNo == null ? null : phoneNo,
     "AddressType_Term": addressTypeTerm == null ? null : addressTypeTerm,
     "AssociationType_Term": associationTypeTerm == null ? null : associationTypeTerm,
-    "LandMark2": landMark2 == null ? null : landMark2,
+    "Area": area == null ? null : area,
     "UserID": userID ?? 0
   };
 
@@ -96,7 +96,7 @@ class ResGetAddressData {
     phoneNo: address?.phoneNo,
     addressTypeTerm: address?.addressTypeTerm,
     associationTypeTerm: address?.associationTypeTerm,
-    landMark2: address?.landMark2,
+    area: address?.area,
   );
 
 }

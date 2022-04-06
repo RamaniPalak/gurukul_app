@@ -1,4 +1,4 @@
-package com.example.gurukul_app
+package com.sqt.gurukul_app
 
 import io.flutter.embedding.android.FlutterActivity
 

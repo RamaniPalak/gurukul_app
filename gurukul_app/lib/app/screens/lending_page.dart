@@ -5,9 +5,11 @@ import 'package:gurukul_app/app/screens/auth/login_screen.dart';
 import 'package:gurukul_app/app/screens/base/base_state_less.dart';
 import 'package:gurukul_app/app/screens/helper_screens/splash_screen.dart';
 import 'package:gurukul_app/app/screens/helper_screens/stuck_page.dart';
-import 'package:gurukul_app/app/screens/home/home_screen.dart';
+import 'package:gurukul_app/app/screens/news/news_list.dart';
 import 'package:gurukul_app/app/utils/constants.dart';
 import 'package:provider/provider.dart';
+
+import 'nikol_gurukul/nikol_gurukul_form.dart';
 
 class LendingPage extends BaseStateLess{
 
@@ -19,6 +21,8 @@ class LendingPage extends BaseStateLess{
     kFontRatio = size.width / 375;//375 will de designer's width for iphone 12 size
 
     print('$kFontRatio ${size.width} ${size.height}');
+
+    // return NikolGurukulForm();
 
     return Consumer<AuthProviderImpl>(builder: (context, auth, __) {
 
@@ -43,7 +47,7 @@ class LendingPage extends BaseStateLess{
       }
 
       if (auth.isLogin ?? false){
-        return HomeScreen();
+        return NewsListScreen();
       }else{
         return LoginScreen();
       }
