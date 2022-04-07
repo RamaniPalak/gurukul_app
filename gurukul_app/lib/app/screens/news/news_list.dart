@@ -36,12 +36,14 @@ class _NewsListScreenState extends BaseState<NewsListScreen> {
         });
   }
 
-  _scrollListener() {
+  _scrollListener() async {
 
     final home = Provider.of<HomeProviderImpl>(context, listen: false);
     // print(_controller?.position.extentAfter);
-    if ((_controller?.position.extentAfter ?? 0) <= 0 && !isLoading) {
-      home.getGurukulPost();
+    if ((_controller?.position.extentAfter ?? 0) <= 0 && !isLoading && (home.totalPage ?? 0) >= (home.page)) {
+      isLoading = true;
+      await home.getGurukulPost();
+      isLoading = false;
     }
   }
 
