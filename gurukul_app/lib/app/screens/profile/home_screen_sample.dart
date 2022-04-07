@@ -21,8 +21,8 @@ class _HomeScreenState extends BaseState<HomeScreenSample>{
 
     //For the initial Screen We can take a state full widget for initial api call
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      final home = Provider.of<HomeProvider>(context,listen: false);
-      home.getRes();
+      final home = Provider.of<HomeProviderImpl>(context,listen: false);
+    //  home.getRes();
     });
 
   }
@@ -41,27 +41,27 @@ class _HomeScreenState extends BaseState<HomeScreenSample>{
             }, icon: Icon(Icons.logout))
           ],
         ),
-        body: consumerPattern()
+        body: Container()
     );
   }
 
-  Widget consumerPattern() {
-    return Consumer<HomeProvider>(
-      builder: (context, home, __) {
-
-        if (home.res != null){
-
-          return resContainer(context: context,res: home.res!, successWidget: Container(
-            color: Colors.green,
-          ),
-              retryCall: (){
-                home.getRes();
-              }
-          );
-        }else{
-          return Container();
-        }
-      },);
-  }
+  // Widget consumerPattern() {
+  //   return Consumer<HomeProviderImpl>(
+  //     builder: (context, home, __) {
+  //       //
+  //       // if (home.res != null){
+  //       //
+  //       //   return resContainer(context: context,res: home.res!, successWidget: Container(
+  //       //     color: Colors.green,
+  //       //   ),
+  //       //       retryCall: (){
+  //       //        // home.getRes();
+  //       //       }
+  //       //   );
+  //       // }else{
+  //       //   return Container();
+  //       // }
+  //     },);
+  // }
 }
 

@@ -164,12 +164,12 @@ class _HomeScreenState extends BaseState<ProfileScreen> {
                 //Gurukuls
                 gurukulComponentConsumer(),
 
-                defaultSizeBoxHeight(height: 10),
-                titleIconButtons(
-                    title: 'Nikol Gurukul',
-                    onTap: () {
-                      Navigator.of(context).pushNamed(kNikolGurukulFormRoute);
-                    }),
+                // defaultSizeBoxHeight(height: 10),
+                // titleIconButtons(
+                //     title: 'Nikol Gurukul',
+                //     onTap: () {
+                //       Navigator.of(context).pushNamed(kNikolGurukulFormRoute);
+                //     }),
 
 
                 defaultSizeBoxHeight(height: 10),
@@ -448,8 +448,8 @@ class _HomeScreenState extends BaseState<ProfileScreen> {
                         },
                         gurukul: GurukulDetailsModel(
                             gurukulName: '${gurukul1.gurukulName ?? ''}',
-                            endDate: gurukul1.startYear,
-                            startDate: gurukul1.endYear,
+                            startDate: gurukul1.startYear,
+                            endDate: gurukul1.endYear,
                             purposeText: '${gurukul1.purposeTitle ?? ''}',
                             // purposeTypeStr: 'Seva',
                             saint1Str: '${gurukul1.saint1Name ?? ''}',

@@ -36,7 +36,13 @@ enum TermCategories {
   InterestedServices_Term,
   GurukulActivities_Term,
   AssociationType_Term,
-  Status_Term
+  Status_Term,
+  BHOJANSAMITI,
+  BETHAK,
+  STAGE,
+  OFFICESEVA,
+  OTHERS,
+  activity_term
 }
 
 final typeTermValues = EnumValues({
@@ -64,7 +70,13 @@ final typeTermValues = EnumValues({
   "InterestedServices_Term": TermCategories.InterestedServices_Term,
   "GurukulActivities_Term": TermCategories.GurukulActivities_Term,
   "AssociationType_Term": TermCategories.AssociationType_Term,
-  "Status_Term": TermCategories.Status_Term
+  "Status_Term": TermCategories.Status_Term,
+  "bhojansamiti" :TermCategories.BHOJANSAMITI,
+  "bethak" : TermCategories.BETHAK,
+  "stage": TermCategories.STAGE,
+  "officeseva": TermCategories.OFFICESEVA,
+  "others": TermCategories.OTHERS,
+  "activity_term": TermCategories.activity_term
 });
 
 //Gender Setup

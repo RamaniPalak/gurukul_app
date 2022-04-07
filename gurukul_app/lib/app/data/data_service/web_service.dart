@@ -51,7 +51,7 @@ class WebService{
 
   }
 
-  Future<Map<String, dynamic>?> postApiDIO({required String path,required data,CancelToken? cancelToken}) async {
+  Future<Map<String, dynamic>?> postApiDIO({required String path,Map<String,dynamic>? queryParameters,data,CancelToken? cancelToken}) async {
 
     try{
 
@@ -63,7 +63,7 @@ class WebService{
         print('Req: $req');
       }
 
-      Response<Map<String, dynamic>> cool = await dio.post<Map<String, dynamic>>(ServerConfigs.baseURL + path,data: data,cancelToken: cancelToken);
+      Response<Map<String, dynamic>> cool = await dio.post<Map<String, dynamic>>(ServerConfigs.baseURL + path,data: data,cancelToken: cancelToken,queryParameters: queryParameters);
 
       print('Res: $cool');
 

@@ -1,16 +1,126 @@
 import 'package:flutter/material.dart';
 import 'package:gurukul_app/app/utils/constants.dart';
+import 'package:gurukul_app/app/utils/enums.dart';
+import 'package:gurukul_app/app/utils/no_data_found_view.dart';
+import 'package:gurukul_app/app/views/network_image.dart';
+import 'package:provider/provider.dart';
 
-class NewsdetailsScreen extends StatelessWidget {
-  const NewsdetailsScreen({Key? key}) : super(key: key);
+import '../../providers/home_provider.dart';
+
+class NewsdetailsScreen extends StatefulWidget {
+  NewsdetailsScreen({Key? key, this.wallId}) : super(key: key);
+
+  final int? wallId;
+
+  @override
+  State<NewsdetailsScreen> createState() => _NewsdetailsScreenState();
+}
+
+class _NewsdetailsScreenState extends State<NewsdetailsScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      final home = Provider.of<HomeProviderImpl>(context, listen: false);
+      home.getGurukulPostDetails(id: widget.wallId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
 
+    return Scaffold(
+      body: bodyDetail(),
+    );
+  }
+
+  Column views() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                height: 40,
+                decoration: BoxDecoration(
+                    border: Border.all(color: kPrimaryColor),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.access_time, color: kPrimaryColor),
+                    //news-eye-icon.svg
+                    Text(
+                      ' 2h ago',
+                      style: TextStyle(
+                          color: kPrimaryColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400),
+                    )
+                  ],
+                ),
+              ),
+              flex: 2,
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              child: Container(
+                height: 40,
+                decoration: BoxDecoration(
+                    color: Color(0xff242426),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.remove_red_eye, color: Colors.white),
+                    //news-eye-icon.svg
+                    const Text(
+                      ' 1k',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400),
+                    )
+                  ],
+                ),
+              ),
+              flex: 2,
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
+
+  Widget bodyDetail() {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-        body: CustomScrollView(
+    return Consumer<HomeProviderImpl>(
+      builder: (_, postdetail, __) {
+        final isLoading =
+            postdetail.getGurukulPostDetailRes?.state == Status.LOADING;
+
+        final hasError = postdetail.getGurukulPostDetailRes?.state ==
+                Status.ERROR ||
+            postdetail.getGurukulPostDetailRes?.state == Status.UNAUTHORISED;
+
+        if (hasError) {
+          return bgContainer(
+              widget: NoDataFoundView(
+                  retryCall: () {
+                    postdetail.getGurukulPostDetails(id: widget.wallId);
+                  },
+                  title: 'No Profile Data Found'));
+        }
+
+        final data = postdetail.getGurukulPostDetailRes?.data?.data;
+
+        print('data=${data?.postTitle}');
+
+        return CustomScrollView(
           slivers: [
             SliverAppBar(
               pinned: true,
@@ -18,102 +128,78 @@ class NewsdetailsScreen extends StatelessWidget {
               // toolbarHeight: size.height * 0.25,
               expandedHeight: size.height * 0.43,
               flexibleSpace: ClipRRect(
-                borderRadius: BorderRadius.only(bottomRight: const Radius.circular(15),bottomLeft: Radius.circular(15)),
-                child: Container(color: Colors.green,),
+                borderRadius: BorderRadius.only(
+                    bottomRight: const Radius.circular(15),
+                    bottomLeft: Radius.circular(15)),
+                child: Container(
+                  height: double.infinity,
+                  child: CustomNetWorkImage(
+                    url: data?.userImage ?? 'assets/images/placeholder.png',
+                  ),
+                ),
               ),
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 9),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        const Expanded(
-                          child: Text('Leeds beautician who opened Horsforth salon',style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700
-                          ),),
+                        Expanded(
+                          child: Text(
+                            '${data?.postTitle}',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w700),
+                          ),
                         ),
                         const SizedBox(
                           width: 15,
                         ),
                         Padding(
                           padding: EdgeInsets.only(bottom: 5),
-                          child: Icon(Icons.share,color: Colors.white,),
+                          child: Icon(
+                            Icons.share,
+                            color: Colors.white,
+                          ),
                         )
                       ],
                     ),
                     SizedBox(height: 10),
+                    Divider(
+                      height: 1,
+                      thickness: 2,
+                      color: Color(0xff576d7e).withOpacity(0.15),
+                    ),
+                    SizedBox(height: 10),
                     // views(),
-                    const Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus et, consequat interdum porta. Massa ac et volutpat proin eget et pellentesque. Morbi amet, laoreet vivamus habitasse dignissim volutpat. Dignissim semper vitae euismod ac, tortor.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus et, consequat interdum porta. Massa ac et volutpat proin eget et pellentesque. Morbi amet, laoreet vivamus habitasse dignissim volutpat. Dignissim semper vitae euismod ac, tortor.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus et, consequat interdum porta. Massa ac et volutpat proin eget et pellentesque. Morbi amet, laoreet vivamus habitasse dignissim volutpat. Dignissim semper vitae euismod ac, tortor.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus et, consequat interdum porta. Massa ac et volutpat proin eget et pellentesque. Morbi amet, laoreet vivamus habitasse dignissim volutpat. Dignissim semper vitae euismod ac, tortor.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus et, consequat interdum porta. Massa ac et volutpat proin eget et pellentesque. Morbi amet, laoreet vivamus habitasse dignissim volutpat. Dignissim semper vitae euismod ac, tortor.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus et, consequat interdum porta. Massa ac et volutpat proin eget et pellentesque. Morbi amet, laoreet vivamus habitasse dignissim volutpat. Dignissim semper vitae euismod ac, tortor.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus et, consequat interdum porta. Massa ac et volutpat proin eget et pellentesque. Morbi amet, laoreet vivamus habitasse dignissim volutpat. Dignissim semper vitae euismod ac, tortor.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus et, consequat interdum porta. Massa ac et volutpat proin eget et pellentesque. Morbi amet, laoreet vivamus habitasse dignissim volutpat. Dignissim semper vitae euismod ac, tortor.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus et, consequat interdum porta. Massa ac et volutpat proin eget et pellentesque. Morbi amet, laoreet vivamus habitasse dignissim .',style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400
-                    ),),
+                    Text(
+                      '${data?.postDescription}',
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                    ),
                   ],
                 ),
               ),
             )
           ],
-        ));
+        );
+      },
+    );
   }
 
-  Column views() {
-    return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: kPrimaryColor),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.access_time,color: kPrimaryColor),
-                                  //news-eye-icon.svg
-                                  Text(
-                                    ' 2h ago',
-                                    style: TextStyle(
-                                        color: kPrimaryColor,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400),
-                                  )
-                                ],
-                              ),
-                            ),
-                            flex: 2,
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  color: Color(0xff242426),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.remove_red_eye,color: Colors.white),
-                                  //news-eye-icon.svg
-                                  const Text(
-                                    ' 1k',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400),
-                                  )
-                                ],
-                              ),
-                            ),
-                            flex: 2,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                    ],
-                  );
+  Container bgContainer({required Widget widget}) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: kFlexibleSize(10.0)),
+      padding: EdgeInsets.all(kFlexibleSize(15.0)),
+      decoration: BoxDecoration(
+          // boxShadow: kCommonShadow,
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15.0)),
+      child: widget,
+    );
   }
 }

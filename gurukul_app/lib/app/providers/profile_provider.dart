@@ -452,6 +452,9 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
   @override
   Future addUserGurukul() async {
     try {
+
+      print(gurukulModel.toJson());
+
       if (gurukulModel.gurukulId == null ||
           gurukulModel.startYear == null ||
           gurukulModel.endYear == null ||
@@ -470,6 +473,22 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
           (gurukulModel.endYear?.microsecondsSinceEpoch ?? 0)) {
         throw 'Start date should be higher';
       }
+      // if(gurukulModel.activity_term1 == null ||
+      //    gurukulModel.activity_term2 == null ){
+      //
+      //   throw emptyFieldsMsg;
+      // }if(gurukulModel.interested_in_term1 == null ||
+      //     gurukulModel.interested_in_term1 == null ){
+      //
+      //   throw emptyFieldsMsg;
+      // }
+      // if(gurukulModel.social_activity_term == null){
+      //   throw emptyFieldsMsg;
+      // }
+      //
+      // if(gurukulModel.social_activity_position?.isEmpty == true){
+      //   throw emptyFieldsMsg;
+      // }
 
       apiResIsLoading(_updateGurukul!);
 
@@ -484,6 +503,7 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
           //Success
           apiResIsSuccess(_updateGurukul!, res);
           getGurukulList(isForAll: true);
+          print("getcool");
         }
       } else {
         final res = await repo.addUserGurukul(data: gurukulModel);

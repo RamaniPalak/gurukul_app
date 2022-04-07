@@ -11,7 +11,7 @@ import 'package:gurukul_app/app/repository/home_repo.dart';
 import 'package:gurukul_app/app/repository/profile_repository.dart';
 import 'package:gurukul_app/app/repository/service_repository.dart';
 
-HomeProvider get homeProvider => HomeProvider(HomeRepository(dataSource: HomeDataImpl()));
+HomeProviderImpl get homeProvider => HomeProviderImpl(HomeRepository(dataSource: HomeDataImpl()));
 AuthProviderImpl get authProvider => AuthProviderImpl(AuthRepository(dataSource: AuthDataImpl()));
 ServiceProviderImpl get serviceProvider => ServiceProviderImpl(ServiceRepository(dataSource: ServiceDataImpl()));
 ProfileProviderImpl get profileProvider => ProfileProviderImpl(ProfileRepository(dataSource: ProfileDataImpl()),serviceProvider);

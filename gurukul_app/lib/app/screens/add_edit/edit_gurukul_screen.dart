@@ -9,6 +9,7 @@ import 'package:gurukul_app/app/screens/helper_screens/search_selection_screen.d
 import 'package:gurukul_app/app/utils/constants.dart';
 import 'package:gurukul_app/app/utils/enums.dart';
 import 'package:gurukul_app/app/utils/extensions.dart';
+import 'package:gurukul_app/app/utils/show_snack_bar.dart';
 import 'package:gurukul_app/app/views/base_button.dart';
 import 'package:gurukul_app/app/views/category_type_drop_down.dart';
 import 'package:gurukul_app/app/views/date_pick_view.dart';
@@ -48,6 +49,23 @@ class _EditGurukulScreenState extends BaseState<EditGurukulScreen> {
 
   ResGetTypeTermListElement? selectedDivision;
 
+  List<ResGetTypeTermListElement>? activities1;
+
+  ResGetTypeTermListElement? selectedActivities1;
+
+  ResGetTypeTermListElement? selectedActivities1_2;
+
+  List<ResGetTypeTermListElement>? activities2;
+
+  ResGetTypeTermListElement? selectedActivities2;
+  ResGetTypeTermListElement? selectedActivities2_2;
+
+  List<ResGetTypeTermListElement>? activities3;
+
+  ResGetTypeTermListElement? selectedActivities3;
+
+  TextEditingController positionController = TextEditingController();
+
   List<SearchModel>? gurukulList(){
     try {
       return gurukuls!.map((e) => SearchModel(title: '${e.gurukulName}',id: e.gurukulId ?? 0)).toList();
@@ -65,24 +83,26 @@ class _EditGurukulScreenState extends BaseState<EditGurukulScreen> {
   }
 
   saveGurukul() async {
-    final profile = Provider.of<ProfileProviderImpl>(context,listen: false);
+    try{
 
-    await profile.addUserGurukul();
+      final profile = Provider.of<ProfileProviderImpl>(context,listen: false);
 
-    final res = profile.updateGurukul;
+      await profile.addUserGurukul();
 
-    handleRes(res: res!, context: context);
+      final res = profile.updateGurukul;
 
-    if(res.state == Status.COMPLETED){
-      Navigator.of(context).pop(true);
+      handleRes(res: res!, context: context);
+
+      if(res.state == Status.COMPLETED){
+        Navigator.of(context).pop(true);
+      }
+
+    } catch(e){
+      ShowSnackBar(context: context, message: e.toString());
     }
+
   }
 
-  ResGetTypeTermListElement? selectedActivityType1;
-  ResGetTypeTermListElement? selectedActivityType2;
-  ResGetTypeTermListElement? selectedJoiningActivityType1;
-  ResGetTypeTermListElement? selectedJoiningActivityType2;
-  ResGetTypeTermListElement? selectedSocialActivityType;
   @override
   void initState() {
     // TODO: implement initState
@@ -95,7 +115,19 @@ class _EditGurukulScreenState extends BaseState<EditGurukulScreen> {
 
       final gurukul = profile.gurukulModel;
 
+
       try {
+
+        // setState(() {
+        //   profile.gurukulModel.social_activity_position = positionController.text ;
+        // });
+
+        setState(() {
+          this.positionController.text = gurukul.social_activity_position ?? '' ;
+        });
+
+
+
         service.getAllGurukulList().then((value) {
 
                 setState(() {
@@ -119,6 +151,7 @@ class _EditGurukulScreenState extends BaseState<EditGurukulScreen> {
         selectedEndDate = gurukul.endYear;
       });
 
+
       service.getAllSaintList().then((value) {
 
         setState(() {
@@ -139,8 +172,6 @@ class _EditGurukulScreenState extends BaseState<EditGurukulScreen> {
 
 
       profile.getListTerms(term: TermCategories.PurposeType_Term).then((value) {
-
-
 
         setState(() {
           this.purposes = value;
@@ -175,8 +206,34 @@ class _EditGurukulScreenState extends BaseState<EditGurukulScreen> {
         });
       });
 
+      profile.getListTerms(term: TermCategories.activity_term).then((value) {
+        setState(() {
+          this.activities1 = value;
+          try {
+
+            this.selectedActivities1 = value?.where((element) => element.termCode == gurukul.activity_term1).first;
+            this.selectedActivities1_2 = value?.where((element) => element.termCode == gurukul.activity_term2).first;
+
+            this.selectedActivities2 = value?.where((element) => element.termCode == gurukul.interested_in_term1).first;
+            this.selectedActivities2_2 = value?.where((element) => element.termCode == gurukul.interested_in_term2).first;
+
+            this.selectedActivities3 = value?.where((element) => element.termCode == gurukul.social_activity_term).first;
+
+          } catch (e) {
+            print(e);
+          }
+        });
+      });
+
+
     });
 
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    positionController.dispose();
   }
 
   @override
@@ -311,19 +368,21 @@ class _EditGurukulScreenState extends BaseState<EditGurukulScreen> {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: CategoryTypeDropDown(
-                          data: [],
+                          data: activities1 ?? [],
                           hint: 'SEWA OR SOCIAL ACTIVITIES',
-                          selectedValue: index == 0 ? selectedActivityType1 : selectedActivityType2,
+                          selectedValue: index == 0 ? selectedActivities1 : selectedActivities1_2,
                           onChange: (value) {
                             print(value?.termCode);
                             setState(() {
                               if(index == 0){
-                              selectedActivityType1= value;
+                                selectedActivities1= value;
+                                profile.gurukulModel.activity_term1 = value?.termCode;
                               }else{
-                              selectedActivityType2 = value;
+                                selectedActivities1_2 = value;
+                                profile.gurukulModel.activity_term2 = value?.termCode;
                               }
                             });
-                          },
+                            },
                         ),
                       );
                     },itemCount: 2,)
@@ -338,18 +397,22 @@ class _EditGurukulScreenState extends BaseState<EditGurukulScreen> {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: CategoryTypeDropDown(
-                          data: [],
+                          data: activities1 ?? [],
                           hint: 'SEWA OR SOCIAL ACTIVITIES',
-                          selectedValue: index == 0 ? selectedJoiningActivityType1 : selectedJoiningActivityType2,
+                          selectedValue: index == 0 ? selectedActivities2 : selectedActivities2_2,
                           onChange: (value) {
                             print(value?.termCode);
                             setState(() {
                               if(index == 0){
-                                selectedJoiningActivityType1 = value;
+                                selectedActivities2 = value;
+                                profile.gurukulModel.interested_in_term1 = value?.termCode;
                               }else{
-                                selectedJoiningActivityType2 = value;
+                                selectedActivities2_2 = value;
+                                profile.gurukulModel.interested_in_term2 = value?.termCode;
+
                               }
                             });
+
                           },
                         ),
                       );
@@ -357,22 +420,29 @@ class _EditGurukulScreenState extends BaseState<EditGurukulScreen> {
                   ],
                 ),
                 SizedBox(height: 10),
-                Text('DO YOU WANT TO JOIN ANY ACTIVITIES OF NIKOL GURUKUL?'),
+                Text('CURRENTLY ASSOCIATED WITH ANY OTHER SOCIAL ACTIVITIES?'),
+                SizedBox(height: 10),
                 CategoryTypeDropDown(
-                  data: [],
+                  data: activities1 ?? [],
                   hint: 'SEWA OR SOCIAL ACTIVITIES',
-                  selectedValue: selectedSocialActivityType,
+                  selectedValue: selectedActivities3,
                   onChange: (value) {
                     print(value?.termCode);
                     setState(() {
-                      selectedSocialActivityType = value;
+                      selectedActivities3 = value;
                     });
+                    profile.gurukulModel.social_activity_term = value?.termCode;
                   },
                 ),
                 SizedBox(height: 10),
                 TextField(
+                  controller: positionController,
+                  onChanged: (str){
+                    profile.gurukulModel.social_activity_position = str ;
+                  },
                   decoration: InputDecoration(
-                      hintText: 'POSITION'
+                      hintText: 'POSITION',
+
                   ),
                 ),
               ],
