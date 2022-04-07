@@ -149,12 +149,23 @@ class _NewsdetailsScreenState extends State<NewsdetailsScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            '${data?.postTitle}',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w700),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${data?.postTitle}',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w700),
+                              ),
+
+                              SizedBox(height: 5),
+                              Text('${data?.gurukulName}',style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),),
+                              Text('Published on: ${data?.publishedOn?.day}-${data?.publishedOn?.month}-${data?.publishedOn?.year}',style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14,color: Colors.grey),),
+                            ],
                           ),
                         ),
+
                         const SizedBox(
                           width: 15,
                         ),

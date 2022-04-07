@@ -130,22 +130,28 @@ class _NewsListScreenState extends BaseState<NewsListScreen> {
                   child: Column(
                     children: [
                       Container(
-                        height: 100,
+                        height: 150,
+                        width: double.infinity,
                         child: CustomNetWorkImage(
                           url: data?[index].userImage ?? 'assets/images/placeholder.png',
+                          fit: BoxFit.cover,
                         ),
                       ),
                       SizedBox(height: 10),
-                      Divider(
-                        height: 1,
-                        thickness: 2,
-                        color: Color(0xff576d7e).withOpacity(0.15),
-                      ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           children: [
-                            Expanded(child: Text('${data?[index].postTitle}',style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),)),
+                            Expanded(child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('${data?[index].postTitle}',style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
+                                SizedBox(height: 5),
+                                Text('${data?[index].gurukulName}',style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),),
+                                Text('Published on: ${data?[index].publishedOn?.day}-${data?[index].publishedOn?.month}-${data?[index].publishedOn?.year}',style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14,color: Colors.grey),),
+                              ],
+                            )),
                             Icon(Icons.arrow_forward_rounded)
                           ],
                         ),
