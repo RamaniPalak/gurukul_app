@@ -9,7 +9,10 @@ import 'package:gurukul_app/app/views/common_images.dart';
 import 'package:gurukul_app/app/views/network_image.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/profile_provider.dart';
 import '../../utils/constants.dart';
+import '../../views/custom_popup_view.dart';
+import '../family_list/family_pending_list.dart';
 
 class NewsListScreen extends BasePage {
    NewsListScreen({Key? key}) : super(key: key);
@@ -24,6 +27,30 @@ class _NewsListScreenState extends BaseState<NewsListScreen> {
 
   late ScrollController? _controller;
 
+  Future getPendingFamilyRequestList() async {
+
+    final home = Provider.of<ProfileProviderImpl>(context, listen: false);
+
+    await home.getListTerms(term: TermCategories.RelationType_Term).then((value) {
+
+      // setState(() {
+      //   this.relations = value;
+      // });
+
+    });
+
+    await home.getFaimilyRequestList();
+
+    if (home.familyPendingList?.state == Status.COMPLETED && (home.familyPendingList?.data?.data?.list?.length ?? 0) > 0) {
+      try {
+        CustomPopup(context, title: 'Family Request', message: "Your have ${home.familyPendingList?.data?.data?.list?.length ?? 0} Requests", primaryBtnTxt: 'Show',secondaryBtnTxt: 'Cancel',primaryAction: (){
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => FamilyPendingList(),));
+        });
+      } catch (e, s) {
+        print(s);
+      }
+    }
+  }
 
   getNewsData() async {
     final home = Provider.of<HomeProviderImpl>(context, listen: false);
@@ -54,6 +81,7 @@ class _NewsListScreenState extends BaseState<NewsListScreen> {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       getNewsData();
+      getPendingFamilyRequestList();
     });
 
     _controller = ScrollController();

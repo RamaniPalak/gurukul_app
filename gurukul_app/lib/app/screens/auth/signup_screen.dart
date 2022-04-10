@@ -60,7 +60,7 @@ class SignUpScreen extends BaseStateLess {
                   style: kAuthTitleStyle, textAlign: TextAlign.start),
               SizedBox(height: kFlexibleSize(20.0)),
               BaseTextField(
-                hint: 'Full Name',
+                hint: 'First Name',
                 keyboardType: TextInputType.name,
                 controller: fullNameController,
               ),

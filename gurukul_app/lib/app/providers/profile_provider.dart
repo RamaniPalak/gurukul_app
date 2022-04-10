@@ -687,6 +687,7 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
       final res = await repo.getFaimilyRequestList();
 
       if (res.status == 0) {
+
         apiResIsFailed(_familyPendingList!, res.message ?? '');
       } else {
         apiResIsSuccess(_familyPendingList!, res);

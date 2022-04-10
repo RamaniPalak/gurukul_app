@@ -81,7 +81,7 @@ class _HomeScreenState extends BaseState<ProfileScreen> {
   }
 
 
-  getPendingFamilyRequestList() async {
+  Future getPendingFamilyRequestList() async {
 
     final home = Provider.of<ProfileProviderImpl>(context, listen: false);
 
@@ -95,7 +95,7 @@ class _HomeScreenState extends BaseState<ProfileScreen> {
 
     await home.getFaimilyRequestList();
 
-    if ((home.familyPendingList?.data?.data?.list?.length ?? 0) > 0) {
+    if (home.familyPendingList?.state == Status.COMPLETED && (home.familyPendingList?.data?.data?.list?.length ?? 0) > 0) {
       try {
         CustomPopup(context, title: 'Family Request', message: "Your have ${home.familyPendingList?.data?.data?.list?.length ?? 0} Requests", primaryBtnTxt: 'Show',secondaryBtnTxt: 'Cancel',primaryAction: (){
           Navigator.of(context).push(MaterialPageRoute(builder: (context) => FamilyPendingList(),));

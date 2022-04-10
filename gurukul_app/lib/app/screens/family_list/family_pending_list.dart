@@ -125,7 +125,7 @@ class _FamilyPendingListState extends State<FamilyPendingList> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 200,
+                                    width: kFlexibleSize(150),
                                     child: CategoryTypeDropDown(
                                       data: relations ?? [],
                                       hint: 'Select Relation',
@@ -168,6 +168,7 @@ class _FamilyPendingListState extends State<FamilyPendingList> {
                                                 child: Text(
                                                   'Approve',
                                                   style: TextStyle(
+                                                    fontSize: kFlexibleSize(15),
                                                       color:
                                                       Colors.white),
                                                 ),
@@ -190,6 +191,7 @@ class _FamilyPendingListState extends State<FamilyPendingList> {
                                                 child: Text(
                                                   'Reject',
                                                   style: TextStyle(
+                                                      fontSize: kFlexibleSize(15),
                                                       color:
                                                       Colors.white),
                                                 ),

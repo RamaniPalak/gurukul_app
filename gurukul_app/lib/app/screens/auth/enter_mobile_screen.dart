@@ -53,7 +53,11 @@ class EnterMobileScreen extends BaseStateLess {
               SizedBox(height: kFlexibleSize(50.0)),
               Text('Enter Mobile Number',style: kAuthTitleStyle,textAlign: TextAlign.start),
               SizedBox(height: kFlexibleSize(20.0)),
-              BaseTextField(hint: 'Mobile Number',keyboardType: TextInputType.phone,isLast: true,controller: mobileField,autoFocus: true,),
+              BaseTextField(hint: 'Mobile Number',keyboardType: TextInputType.phone,isLast: true,controller: mobileField,autoFocus: true,onChanged: (text){
+                if (text.length > 9) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                }
+              },),
               SizedBox(height: kFlexibleSize(30.0)),
               mobileConsumer(context),
             ],

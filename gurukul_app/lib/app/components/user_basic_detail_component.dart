@@ -111,12 +111,12 @@ class UserBasicDetailsComponent extends StatelessWidget {
                         defaultSizeBoxHeight(height: 5),
                         if(user.maritalStatusStr == "MARRIED")
                         keyValueComponent(key: 'Anniversary Date', value: '${user.marriageDate?.toStrCommonFormat().checkForNull() ?? 'N/A'}'),
-                        defaultSizeBoxHeight(height: 5),
-                        keyValueComponent(key: 'Cast Type', value: '${user.castTypeStr ?? '-'}'),
-                        defaultSizeBoxHeight(height: 5),
-                        keyValueComponent(
-                            key: 'Subcast Type', value: '${user.subCastTypeStr ?? '-'}'),
-                        defaultSizeBoxHeight(height: 20)
+                        // defaultSizeBoxHeight(height: 5),
+                        // keyValueComponent(key: 'Cast Type', value: '${user.castTypeStr ?? '-'}'),
+                        // defaultSizeBoxHeight(height: 5),
+                        // keyValueComponent(
+                        //     key: 'Subcast Type', value: '${user.subCastTypeStr ?? '-'}'),
+                        defaultSizeBoxHeight(height: 15)
                       ],
                     ),
 

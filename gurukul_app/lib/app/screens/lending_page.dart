@@ -39,7 +39,9 @@ class LendingPage extends BaseStateLess{
       }
 
       if(auth.isNewUpdateAvailable == true){
-        return StuckTheAppPage(btnTap: (){}, text: 'New update available, please click on go to update the app.', btnText: 'Update');
+        return StuckTheAppPage(btnTap: (){
+
+        }, text: 'New update available, please click on go to update the app.', btnText: 'Update');
       }
 
       if (auth.isLogin == null){

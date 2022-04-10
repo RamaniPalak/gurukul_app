@@ -60,15 +60,19 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: kFlexibleSize(40.0)),
+              SizedBox(height: kFlexibleSize(30.0)),
               Container(
-                height: kFlexibleSize(270.0),
+                height: kFlexibleSize(250.0),
                 width: double.infinity,
                   child: appIconImage),
               SizedBox(height: kFlexibleSize(50.0)),
               Text('Login to your Account',style: kAuthTitleStyle,textAlign: TextAlign.start),
               SizedBox(height: kFlexibleSize(20.0)),
-              BaseTextField(hint: 'Mobile Number',keyboardType: TextInputType.phone,controller: mobileField,),
+              BaseTextField(hint: 'Mobile Number',keyboardType: TextInputType.phone,controller: mobileField,onChanged: (text){
+                if (text.length > 9) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                }
+              },autoFocus: true,),
               SizedBox(height: kFlexibleSize(10.0)),
               BaseTextField(hint: 'Password',keyboardType: TextInputType.visiblePassword,secureText: true,isLast: true,controller: passwordField,),
               InkWell(
@@ -87,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SizedBox(height: kFlexibleSize(10.0)),
               loginConsumer(context),
-              SizedBox(height: kFlexibleSize(80.0)),
+              SizedBox(height: kFlexibleSize(8.0)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

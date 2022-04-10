@@ -9,8 +9,49 @@ import 'package:gurukul_app/app/utils/no_data_found_view.dart';
 import 'package:gurukul_app/app/views/loading_small.dart';
 import 'package:provider/provider.dart';
 
-class FamilyListScreen extends StatelessWidget {
+import '../../utils/show_snack_bar.dart';
+import '../../views/custom_popup_view.dart';
+import 'family_pending_list.dart';
+
+class FamilyListScreen extends StatefulWidget {
   const FamilyListScreen({Key? key}) : super(key: key);
+
+  @override
+  State<FamilyListScreen> createState() => _FamilyListScreenState();
+}
+
+class _FamilyListScreenState extends State<FamilyListScreen> {
+
+  Future getPendingFamilyRequestList() async {
+
+    final home = Provider.of<ProfileProviderImpl>(context, listen: false);
+
+    await home.getListTerms(term: TermCategories.RelationType_Term).then((value) {
+
+      // setState(() {
+      //   this.relations = value;
+      // });
+
+    });
+
+    home.familyPendingList?.state = Status.LOADING;
+
+    await home.getFaimilyRequestList();
+
+    if(home.familyPendingList?.state == Status.ERROR){
+      ShowSnackBar(context: context, message: home.familyPendingList?.msg ?? "");
+    }
+
+    if (home.familyPendingList?.state == Status.COMPLETED && (home.familyPendingList?.data?.data?.list?.length ?? 0) > 0) {
+      try {
+        CustomPopup(context, title: 'Family Request', message: "Your have ${home.familyPendingList?.data?.data?.list?.length ?? 0} Requests", primaryBtnTxt: 'Show',secondaryBtnTxt: 'Cancel',primaryAction: (){
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => FamilyPendingList(),));
+        });
+      } catch (e) {
+        ShowSnackBar(context: context, message: e.toString());
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +64,10 @@ class FamilyListScreen extends StatelessWidget {
             profile.isFamilyUpdating = false;
             profile.familyMember = FamilyMemberModel();
             Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditFamilyScreen()));
-          }, icon: Icon(Icons.add))
+          }, icon: Icon(Icons.add)),
+          IconButton(onPressed: (){
+            getPendingFamilyRequestList();
+          }, icon: Icon(Icons.notification_important,color: Colors.white,))
         ],
       ),
       body: bodyConsumer(context),

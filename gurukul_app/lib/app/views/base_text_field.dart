@@ -51,10 +51,12 @@ class BaseTextField extends StatelessWidget {
             ],
             style: TextStyle(fontSize: kRegularFontSize,color: (enabled == false) ? kFontColor.withOpacity(0.5) : kFontColor),
             cursorColor: kPrimaryColor,
+            // maxLength: keyboardType == TextInputType.phone ? 10 : null,
             keyboardType: keyboardType,
             textInputAction:
                 isLast == true ? TextInputAction.done : TextInputAction.next,
             decoration: InputDecoration(
+              counter: SizedBox.shrink(),
               focusColor: kPrimaryColor,
               hintText: hint,
               contentPadding:

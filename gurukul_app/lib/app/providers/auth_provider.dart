@@ -146,8 +146,18 @@ class AuthProviderImpl extends BaseNotifier implements AuthProvider {
       final res = await repo.userLogout(id: user.userID);
 
       if (res.status == 0) {
+        await UserPrefs.shared.clear();
+
+        isLogin = false;
+
+        apiResIsSuccess(_logoutRes!, res);
         throw res.message ?? '';
       }else if (res.status == 2) {
+        await UserPrefs.shared.clear();
+
+        isLogin = false;
+
+        apiResIsSuccess(_logoutRes!, res);
         apiResIsUnAuthorise(_logoutRes!, res.message ?? '');
       }else{
         await UserPrefs.shared.clear();
@@ -305,32 +315,37 @@ class AuthProviderImpl extends BaseNotifier implements AuthProvider {
     }
   }
 
-  bool checkForNewUpdateAvailable({required String serverVersion,required String mobileVersion}) {
+  bool compareVersions({required String serverVersion, required String mobileVersion}) {
 
     try {
       final serverVersions = serverVersion.split('.');
       final localVersions = mobileVersion.split('.');
 
-      var isLocalBig = false;
+      var isLocalBig = true;
 
       for(var i = 0; i < serverVersions.length; i++){
 
         final serverVersion = int.parse(serverVersions[i]);
         final localVersion = int.parse(localVersions[i]);
 
-        if(serverVersion == localVersion){continue;}
+        print('mobile = $localVersion server = $serverVersion check ${serverVersion < localVersion}');
+
+        if(serverVersion == localVersion){
+          continue;
+        }
 
         isLocalBig = serverVersion < localVersion;
 
-        if(isLocalBig){break;}
-
+        if(isLocalBig){
+          break;
+        }
       }
 
       return isLocalBig;
 
     } catch (e) {
       print(e);
-      return false;
+      return true;
     }
 
   }
@@ -350,10 +365,16 @@ class AuthProviderImpl extends BaseNotifier implements AuthProvider {
     final package = await PackageInfo.fromPlatform();
 
     if(Platform.isAndroid){
-      isNewUpdateAvailable = checkForNewUpdateAvailable(serverVersion: '${res?.data?.androidAppVersion}', mobileVersion: '${package.version}');
+      isNewUpdateAvailable = !compareVersions(serverVersion: '${res?.data?.androidAppVersion}', mobileVersion: '${package.version}');
     }else{
-      isNewUpdateAvailable = checkForNewUpdateAvailable(serverVersion: '${res?.data?.iosAppVersion}', mobileVersion: '${package.version}');
+      isNewUpdateAvailable = !compareVersions(serverVersion: '${res?.data?.iosAppVersion}', mobileVersion: '${package.version}');
     }
+
+    print("res?.data?.iosAppVersion ${res?.data?.iosAppVersion}");
+
+    print("package.version ${package.version}");
+
+    print("isNewUpdateAvailable $isNewUpdateAvailable");
 
     notifyListeners();
 

@@ -38,6 +38,8 @@ class _EnterOTPScreenState extends BaseState<EnterOTPScreen> {
     }
   }
 
+  final otpDigits = 4;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -46,8 +48,8 @@ class _EnterOTPScreenState extends BaseState<EnterOTPScreen> {
 
     final auth = Provider.of<AuthProviderImpl>(context,listen: false);
     setState(() {
-      otpController.text = (auth.sendOtpRes?.data?.data?.otp ?? null)?.toString() ?? '';
-      otpTexts = otpController.text;
+      // otpController.text = (auth.sendOtpRes?.data?.data?.otp ?? null)?.toString() ?? '';
+      // otpTexts = otpController.text;
     });
   }
 
@@ -120,25 +122,30 @@ class _EnterOTPScreenState extends BaseState<EnterOTPScreen> {
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            otpField(text: '${otpTexts.safeIndexStrFrom(0)}'),
-            otpField(text: '${otpTexts.safeIndexStrFrom(1)}'),
-            otpField(text: '${otpTexts.safeIndexStrFrom(2)}'),
-            otpField(text: '${otpTexts.safeIndexStrFrom(3)}'),
-          ],
+          children:
+          List.generate(otpDigits, (index) {
+            return otpField(text: '${otpTexts.safeIndexStrFrom(index)}');
+          }
+          )
+          // [
+          //   otpField(text: '${otpTexts.safeIndexStrFrom(0)}'),
+          //   otpField(text: '${otpTexts.safeIndexStrFrom(1)}'),
+          //   otpField(text: '${otpTexts.safeIndexStrFrom(2)}'),
+          //   otpField(text: '${otpTexts.safeIndexStrFrom(3)}'),
+          // ],
         ),
         TextField(
           autofocus: true,
           controller: otpController,
           onChanged: (text) {
 
-            if (text.length <= 4) {
+            if (text.length <= otpDigits) {
               setState(() {
                 otpTexts = text;
               });
             }
 
-            if (text.length > 3) {
+            if (text.length > otpDigits - 1) {
               FocusScope.of(context).requestFocus(FocusNode());
               otpController.text = this.otpTexts;
             }
@@ -164,9 +171,9 @@ class _EnterOTPScreenState extends BaseState<EnterOTPScreen> {
   }
 
   Widget otpField({required String text}) {
-    return AspectRatio(
-      aspectRatio: 1.33,
+    return Expanded(
       child: Container(
+        margin: EdgeInsets.symmetric(horizontal: kFlexibleSize(5.0)),
         height: kFlexibleSize(45.0),
         decoration: BoxDecoration(
           color: Colors.white,
