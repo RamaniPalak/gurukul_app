@@ -9,7 +9,7 @@ class ReqVerifyOtp {
   String? otp;
 
   Map<String, dynamic> toJson() => {
-    "mobile": mobile,
+    "mobile": mobile?.trim(),
     "otp": otp,
   };
 }

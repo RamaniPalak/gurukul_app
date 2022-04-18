@@ -10,6 +10,6 @@ class ReqUserUpdatePasswordByNumber {
 
   Map<String, dynamic> toJson() => {
     "Password": password,
-    "MobileNo": mobileNo,
+    "MobileNo": mobileNo?.trim(),
   };
 }

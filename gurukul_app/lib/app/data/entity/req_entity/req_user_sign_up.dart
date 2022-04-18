@@ -15,7 +15,7 @@ class ReqUserSignUp {
   Map<String, dynamic> toJson() => {
     "UserName": userName,
     "Password": password,
-    "MobileNo": mobileNo,
-    "Email": email,
+    "MobileNo": mobileNo?.trim(),
+    "Email": email?.trim(),
   };
 }

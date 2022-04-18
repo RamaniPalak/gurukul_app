@@ -411,23 +411,26 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
                   ),
 
                   defaultSizedBox(),
-                  Container(
-                    child: Text('Religion', style: kTextBold),
-                  ),
-                  defaultSizedBox(),
 
-                  CategoryTypeDropDown(
-                    data: religions ?? [],
-                    hint: 'Religion',
-                    selectedValue: selectedReligion,
-                    onChange: (value) {
-                      setState(() {
-                        selectedReligion = value;
-                      });
-                    },
-                  ),
+                  // Container(
+                  //   child: Text('Religion', style: kTextBold),
+                  // ),
+                  // defaultSizedBox(),
+                  //
+                  // CategoryTypeDropDown(
+                  //   data: religions ?? [],
+                  //   hint: 'Religion',
+                  //   selectedValue: selectedReligion,
+                  //   onChange: (value) {
+                  //     setState(() {
+                  //       selectedReligion = value;
+                  //     });
+                  //   },
+                  // ),
+                  //
+                  // defaultSizedBox(),
 
-                  defaultSizedBox(),
+
                   Container(
                     child: Text('Marital Status', style: kTextBold),
                   ),

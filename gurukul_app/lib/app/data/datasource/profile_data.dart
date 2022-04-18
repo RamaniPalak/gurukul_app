@@ -260,6 +260,7 @@ class ProfileDataImpl implements ProfileData{
   @override
   Future<ResEmpty> updateFamilyMember({String? path,required FamilyMemberModel family}) async {
     if(path != null){
+      print("$path image to share");
       family.userImageFile = await MultipartFile.fromFile(path);
     }
 

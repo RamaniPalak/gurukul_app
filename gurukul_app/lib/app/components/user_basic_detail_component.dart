@@ -99,10 +99,10 @@ class UserBasicDetailsComponent extends StatelessWidget {
                                   hasPadding: true,
                                   key: 'Blood Group',
                                   value: '${user.bloodGroupStr ?? '?'}'),
-                              boxes(
-                                  hasPadding: false,
-                                  key: 'Religion',
-                                  value: '${user.religionStr ?? '?'}'),
+                              // boxes(
+                              //     hasPadding: false,
+                              //     key: 'Religion',
+                              //     value: '${user.religionStr ?? '?'}'),
                             ],
                           ),
                         ),
