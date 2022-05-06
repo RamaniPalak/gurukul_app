@@ -12,6 +12,7 @@ import 'package:gurukul_app/app/views/base_button.dart';
 import 'package:gurukul_app/app/views/base_text_field.dart';
 import 'package:gurukul_app/app/views/category_type_drop_down.dart';
 import 'package:gurukul_app/app/views/common_images.dart';
+import 'package:gurukul_app/app/views/loading_small.dart';
 import 'package:gurukul_app/app/views/network_image.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +26,7 @@ class EditFamilyScreen extends BasePage {
 
 class _EditFamilyScreenState extends BaseState<EditFamilyScreen> {
 
-  PickImage? pickImage;
+  PickImage pickImage = PickImage();
 
   File? img;
 
@@ -41,6 +42,8 @@ class _EditFamilyScreenState extends BaseState<EditFamilyScreen> {
   List<ResGetTypeTermListElement>? occupations;
 
   ResGetTypeTermListElement? selectedOccupations;
+
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -64,22 +67,22 @@ class _EditFamilyScreenState extends BaseState<EditFamilyScreen> {
 
     });
 
-    pickImage = PickImage(
-        context: context,
-        updateFile: () async {
-          try{
+    pickImage.onFile = (file){
 
-            print(pickImage?.imageFile?.path);
+      setState(() {
+        img = File(file);
+      });
 
-            setState(() {
-              img = pickImage?.imageFile;
-            });
+    };
 
-          }catch(e){
-            print("Exception:");
-            print(e);
-          }
-        });
+    pickImage.onLoading = (isLoading){
+
+      setState(() {
+        this.isLoading = isLoading;
+      });
+
+    };
+
   }
 
   Future getNeededTerms() async {
@@ -180,7 +183,7 @@ class _EditFamilyScreenState extends BaseState<EditFamilyScreen> {
                         ) ,
                       ),
                       onTap: (){
-                        pickImage?.selectImage();
+                        pickImage.selectImage(context);
                       },
                     ),
                     Container(
@@ -274,6 +277,10 @@ class _EditFamilyScreenState extends BaseState<EditFamilyScreen> {
   }
 
   Widget profileImage({FamilyMemberModel? data}) {
+
+    if(isLoading){
+      return Center(child: LoadingSmall(color: Colors.red,));
+    }
 
     print(data?.userImage);
 

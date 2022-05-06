@@ -235,7 +235,7 @@ class AuthProviderImpl extends BaseNotifier implements AuthProvider {
   @override
   Future signUpUser({required SignUpModel signup}) async {
     try {
-      if (signup.fullName.isEmpty ||
+      if (signup.fullName.trim().isEmpty ||
           this.mobile!.isEmpty ||
           signup.email.isEmpty ||
           signup.password.isEmpty ||
@@ -243,7 +243,7 @@ class AuthProviderImpl extends BaseNotifier implements AuthProvider {
         throw emptyFieldsMsg;
       }
 
-      if(!signup.email.isValidEmail){
+      if(!signup.email.trim().isValidEmail){
         throw 'Please enter valid Email Address.';
       }
 

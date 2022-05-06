@@ -106,11 +106,11 @@ class FamilyMemberModel {
 
   Map<String, dynamic> toJson() => {
     "MemberID": memberId == null ? null : memberId,
-    "FirstName": firstName == null ? null : firstName,
-    "MiddleName": middleName == null ? null : middleName,
-    "LastName": lastName == null ? null : lastName,
+    "FirstName": firstName == null ? null : firstName?.trim(),
+    "MiddleName": middleName == null ? null : middleName?.trim(),
+    "LastName": lastName == null ? null : lastName?.trim(),
     "RelationType_Term": relationTypeTerm == null ? null : relationTypeTerm,
-    "MobileNo": mobileNo == null ? null : mobileNo,
+    "MobileNo": mobileNo == null ? null : mobileNo?.trim(),
     "ProfilePic": userImageFile == null ? null : userImageFile,
     "Occupation_Term": occupationTerm == null ? null : occupationTerm,
     "MemberFamilyID": memberFamilyID == null ? null : memberFamilyID,

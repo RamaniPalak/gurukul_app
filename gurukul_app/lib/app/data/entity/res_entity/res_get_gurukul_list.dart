@@ -160,7 +160,7 @@ class GurukulModel {
     "activity_term": "$activity_term1,$activity_term2",
     "interested_in_term" : "$interested_in_term1,$interested_in_term2",
     "social_activity_term" : social_activity_term == null ? null :social_activity_term,
-    "social_activity_position" : social_activity_position == null ? null :social_activity_position
+    "social_activity_position" : social_activity_position == null ? null :social_activity_position?.trim()
   };
 
   factory GurukulModel.fill(GurukulModel? gurukul) => GurukulModel(
