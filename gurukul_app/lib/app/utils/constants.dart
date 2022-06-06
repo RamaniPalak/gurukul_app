@@ -76,9 +76,9 @@ get kAuthTitleStyle => TextStyle(
 );
 
 final String  Sgrsgurukul= "એસજીઆરએસ ગુરુકુલ સાથે કેવી રીતે જોડાયલા છો?";
-final String  oldSchool = "કયા ગુરુકુલ માં ભણેલા છો?";
-final String  gurukulSelection = "હાલમા કાયા ગુરુકુલ સાથે જોડાયલા છો?";
-final String  saintSelection = "હાલમા કાયા સંત સાથે જોડાયલા છો?";
+final String  oldSchool = "ક્યા ગુરુકુલ માં ભણેલા છો?";
+final String  gurukulSelection = "હાલમા ક્યા ગુરુકુલ સાથે જોડાયલા છો?";
+final String  saintSelection = "હાલમા ક્યા સંત સાથે જોડાયલા છો?";
 final String  nikolGurukul = "નિકોલ ગુરુકુલ સાથે કોઈ સેવા માં જોડાયલા છો?";
 final String sevaSelection = "નિકોલ ગુરુકુલ સાથે કોઈ સેવા માં જોડાવા માગો છો?";
 final String  samajikSelection = "હાલમા અન્ય કોઈ સામાજિક સેવા માં જોડાયલા છો?";
