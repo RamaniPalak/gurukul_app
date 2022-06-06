@@ -70,11 +70,11 @@ class ResGetAddressData {
 
   Map<String, dynamic> toJson() => {
     "AddressID": addressId ?? 0,
-    "Address1": address1 == null ? null : address1,
-    "Address2": address2 == null ? null : address2,
-    "LandMark1": landMark1 == null ? null : landMark1,
+    "?Address1": address1 == null ? null : address1?.trim(),
+    "Address2": address2 == null ? null : address2?.trim(),
+    "LandMark1": landMark1 == null ? null : landMark1?.trim(),
     "City": city == null ? null : city,
-    "PinCode": pinCode == null ? null : pinCode,
+    "PinCode": pinCode == null ? null : pinCode?.trim(),
     "State": state == null ? null : state,
     "Country": country == null ? null : country,
     "PhoneNo": phoneNo == null ? null : phoneNo,

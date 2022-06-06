@@ -9,7 +9,7 @@ class ReqSendOtp {
   int? isForUpdatePassword;
 
   Map<String, dynamic> toJson() => {
-    "mobile": mobile,
+    "mobile": mobile?.trim(),
     "is_for_update_password" : isForUpdatePassword
   };
 }

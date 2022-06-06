@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gurukul_app/app/data/entity/req_entity/req_update_hobby_skill_by_user_id.dart';
@@ -8,6 +10,8 @@ import 'package:gurukul_app/app/data/entity/res_entity/res_get_family_member_byu
 import 'package:gurukul_app/app/data/entity/res_entity/res_get_gurukul_list.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_get_skill_hobby_by_userId.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_get_type_term.dart';
+import 'package:gurukul_app/app/data/entity/res_entity/res_nikol_gurukul.dart';
+import 'package:gurukul_app/app/data/entity/res_entity/res_sgrs_gurukul.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_user_basic_details.dart';
 import 'package:gurukul_app/app/providers/base_notifier.dart';
 import 'package:gurukul_app/app/providers/serviceProvider.dart';
@@ -50,6 +54,14 @@ class ProfileProvider {
   Future getFaimilyRequestList() async {}
 
   Future acceptRejectRequestFaimily({required int familyID, required String status, String? term}) async {}
+
+  Future getNikolList() async {}
+
+  Future addNikolGurukul() async {}
+
+  Future getSgrsList() async {}
+
+  Future addSgrsGurukul() async {}
 }
 
 class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
@@ -62,6 +74,8 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
   late ServiceProviderImpl service;
 
   AddressType addressTypeEditing = AddressType.CURRENT;
+
+  List<int> years = [] ;
 
   ProfileProviderImpl(this.repo, this.service) {
     _userRes = ApiResponse();
@@ -79,6 +93,20 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
     _updateFamily = ApiResponse();
     _familyPendingList = ApiResponse();
     _familyReq = ApiResponse();
+    _nikolLists = ApiResponse();
+    _updateNikolGurukul = ApiResponse();
+    _sgrsLists = ApiResponse();
+    _updateSgrsGurukul = ApiResponse();
+
+    years = [];
+
+    final currentYear = DateTime.now().year;
+    // years.add(currentYear);
+    for(int i = 0; i < 100; i++){
+
+      years.add(currentYear-i);
+    }
+
   }
 
   //Api Obj
@@ -177,6 +205,29 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
     familyMember = FamilyMemberModel.fill(family);
   }
 
+  NikolGurukulData? nikolGurukulData =NikolGurukulData();
+
+ //Nikol
+  ApiResponse<ResNikolGurukul>? _nikolLists;
+
+  ApiResponse<ResNikolGurukul>? get nikolLists => _nikolLists;
+
+  ApiResponse<ResEmpty>? _updateNikolGurukul;
+
+  ApiResponse<ResEmpty>? get updateNikolGurukul => _updateNikolGurukul;
+
+  //SGRS
+  SgrsGurukulData? sgrsGurukulData = SgrsGurukulData();
+
+  ApiResponse<ResSgrsGurukul>? _sgrsLists;
+
+  ApiResponse<ResSgrsGurukul>? get sgrsLists => _sgrsLists;
+
+  ApiResponse<ResEmpty>? _updateSgrsGurukul;
+
+  ApiResponse<ResEmpty>? get updateSgrsGurukul => _updateSgrsGurukul;
+
+
   ApiResponse<ResEmpty>? _updateFamily;
 
   ApiResponse<ResEmpty>? get updateFamily => _updateFamily;
@@ -210,20 +261,20 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
   Future updateUserBasicDetails({String? path}) async {
     try {
       if (userData != null) {
-        if (userData?.firstName == null ||
-                userData?.middleName == null ||
-                userData?.lastName == null ||
-                userData?.whatsAppNo == null ||
-                userData?.email == null ||
+        if (userData?.firstName?.trim() == null ||
+                userData?.middleName?.trim() == null ||
+                userData?.lastName?.trim() == null ||
+                userData?.whatsAppNo?.trim() == null ||
+                userData?.email?.trim() == null ||
                 userData?.birthDay == null ||
                 userData?.genderType == null ||
                 userData?.bloodGroupTerm == null ||
                 userData?.maritalStatusTerm == null ||
-                userData!.firstName!.isEmpty ||
-                userData!.middleName!.isEmpty ||
-                userData!.lastName!.isEmpty ||
-                userData!.whatsAppNo!.isEmpty ||
-                userData!.email!.isEmpty ||
+                userData!.firstName!.trim().isEmpty ||
+                userData!.middleName!.trim().isEmpty ||
+                userData!.lastName!.trim().isEmpty ||
+                userData!.whatsAppNo!.trim().isEmpty ||
+                userData!.email!.trim().isEmpty ||
                 userData?.birthDay == null ||
                 userData!.genderType! == Gender.NONE ||
                 userData!.bloodGroupTerm!.isEmpty ||
@@ -243,7 +294,7 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
           throw 'Please enter valid whatsapp number.';
         }
 
-        if (!userData!.email!.isValidEmail) {
+        if (!userData!.email!.trim().isValidEmail) {
           throw 'Please enter valid Email Address.';
         }
 
@@ -352,12 +403,12 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
           editingAddressObject?.state == null ||
           editingAddressObject?.city == null ||
           editingAddressObject?.country == null ||
-          editingAddressObject!.address1!.isEmpty ||
-          editingAddressObject!.address2!.isEmpty ||
-          editingAddressObject!.landMark1!.isEmpty ||
-          editingAddressObject!.area!.isEmpty ||
-          editingAddressObject!.pinCode!.isEmpty ||
-          editingAddressObject!.phoneNo!.isEmpty ||
+          editingAddressObject!.address1!.trim().isEmpty ||
+          editingAddressObject!.address2!.trim().isEmpty ||
+          editingAddressObject!.landMark1!.trim().isEmpty ||
+          editingAddressObject!.area!.trim().isEmpty ||
+          editingAddressObject!.pinCode!.trim().isEmpty ||
+          editingAddressObject!.phoneNo!.trim().isEmpty ||
           editingAddressObject!.state!.isEmpty ||
           editingAddressObject!.city!.isEmpty ||
           editingAddressObject!.country!.isEmpty) {
@@ -636,10 +687,10 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
           familyMember.mobileNo == null ||
           familyMember.relationTypeTerm == null ||
           familyMember.occupationTerm == null ||
-          familyMember.firstName!.isEmpty ||
-          familyMember.middleName!.isEmpty ||
-          familyMember.lastName!.isEmpty ||
-          familyMember.mobileNo!.isEmpty ||
+          familyMember.firstName!.trim().isEmpty ||
+          familyMember.middleName!.trim().isEmpty ||
+          familyMember.lastName!.trim().isEmpty ||
+          familyMember.mobileNo!.trim().isEmpty ||
           familyMember.relationTypeTerm!.isEmpty ||
           familyMember.occupationTerm!.isEmpty) {
         throw emptyFieldsMsg;
@@ -723,5 +774,137 @@ class ProfileProviderImpl extends BaseNotifier implements ProfileProvider {
       print(e);
       apiResIsFailed(_familyReq!, e);
     }
+  }
+
+  @override
+  Future getNikolList() async {
+    try {
+      apiResIsLoading(_nikolLists!);
+
+      final res = await repo.getNikolList();
+
+      if (res.status == 0) {
+        apiResIsFailed(_nikolLists!, res.message ?? '');
+      } else if (res.status == 2) {
+        apiResIsUnAuthorise(_nikolLists!, res.message ?? '');
+      } else {
+        //Success
+        apiResIsSuccess(_nikolLists!, res);
+        nikolGurukulData = res.data;
+      }
+    } catch (e) {
+      apiResIsFailed(_nikolLists!, e);
+    }
+  }
+
+  @override
+  Future addNikolGurukul() async {
+    try{
+      apiResIsLoading(_updateNikolGurukul!);
+
+      if(nikolGurukulData?.memberGurukulId == null){
+
+        final res = await repo.addNikolGurukul(nikol: nikolGurukulData!);
+
+        if (res.status == 0) {
+          apiResIsFailed(_updateNikolGurukul!, res.message ?? '');
+        } else if (res.status == 2) {
+          apiResIsUnAuthorise(_updateNikolGurukul!, res.message ?? '');
+        } else {
+          //Success
+         await getNikolList();
+          apiResIsSuccess(_updateNikolGurukul!, res);
+          print("getaddnikol");
+        }
+
+      } else {
+        final res = await repo.updateNikol(data: nikolGurukulData!);
+
+        if (res.status == 0) {
+          apiResIsFailed(_updateNikolGurukul!, res.message ?? '');
+        } else if (res.status == 2) {
+          apiResIsUnAuthorise(_updateNikolGurukul!, res.message ?? '');
+        } else {
+          //Success
+          await getNikolList();
+          apiResIsSuccess(_updateNikolGurukul!, res);
+          print("getupadatenikol");
+        }
+      }
+
+    } catch(e){
+      print(e);
+      apiResIsFailed(_updateNikolGurukul!, e.toString());
+
+    }
+  }
+
+  @override
+  Future getSgrsList() async {
+    try{
+      apiResIsLoading(_sgrsLists!);
+
+      final res = await repo.getSgrsList();
+
+      if (res.status == 0) {
+        apiResIsFailed(_sgrsLists!, res.message ?? '');
+      } else if (res.status == 2) {
+        apiResIsUnAuthorise(_sgrsLists!, res.message ?? '');
+      } else {
+        //Success
+        apiResIsSuccess(_sgrsLists!, res);
+        sgrsGurukulData = res.data;
+      }
+
+    } catch(e){
+      print(e);
+      apiResIsFailed(_sgrsLists!, e.toString());
+
+    }
+  }
+
+
+  @override
+  Future addSgrsGurukul() async {
+  try{
+    if ((sgrsGurukulData?.startYear?.microsecondsSinceEpoch ?? 0) >=
+        (sgrsGurukulData?.endYear?.microsecondsSinceEpoch ?? 0)) {
+      throw 'End Year should be higher than Start Year';
+    }
+
+    apiResIsLoading(_updateSgrsGurukul!);
+
+    if(sgrsGurukulData?.memberGurukulId == null){
+      final res = await repo.addSgrsGurukul(data: sgrsGurukulData!);
+
+      if (res.status == 0) {
+        apiResIsFailed(_updateSgrsGurukul!, res.message ?? '');
+      } else if (res.status == 2) {
+        apiResIsUnAuthorise(_updateSgrsGurukul!, res.message ?? '');
+      } else {
+        //Success
+        await getSgrsList();
+        apiResIsSuccess(_updateSgrsGurukul!, res);
+        print("getaddsgrs");
+      }
+    } else {
+      final res = await repo.updateSgrs(data: sgrsGurukulData!);
+
+      if (res.status == 0) {
+        apiResIsFailed(_updateSgrsGurukul!, res.message ?? '');
+      } else if (res.status == 2) {
+        apiResIsUnAuthorise(_updateSgrsGurukul!, res.message ?? '');
+      } else {
+        //Success
+        await getSgrsList();
+        apiResIsSuccess(_updateSgrsGurukul!, res);
+        print("getupadatesgrs");
+      }
+    }
+
+  } catch(e){
+    print(e);
+    apiResIsFailed(_updateSgrsGurukul!, e.toString());
+  }
   }
 }

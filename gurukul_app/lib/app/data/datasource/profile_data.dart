@@ -2,6 +2,7 @@
 import 'package:dio/dio.dart';
 import 'package:gurukul_app/app/data/data_service/server_configs.dart';
 import 'package:gurukul_app/app/data/data_service/web_service.dart';
+import 'package:gurukul_app/app/data/entity/req_entity/req_nikol_sgrs.dart';
 import 'package:gurukul_app/app/data/entity/req_entity/req_update_hobby_skill_by_user_id.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_empty.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_ge_profession_detail.dart';
@@ -9,6 +10,8 @@ import 'package:gurukul_app/app/data/entity/res_entity/res_get_address.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_get_family_member_byuser_id.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_get_gurukul_list.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_get_skill_hobby_by_userId.dart';
+import 'package:gurukul_app/app/data/entity/res_entity/res_nikol_gurukul.dart';
+import 'package:gurukul_app/app/data/entity/res_entity/res_sgrs_gurukul.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_user_basic_details.dart';
 import 'package:gurukul_app/app/utils/enums.dart';
 import 'package:gurukul_app/app/utils/messages.dart';
@@ -39,6 +42,14 @@ abstract class ProfileData{
   Future<ResEmpty> updateFamilyMember({String? path,required FamilyMemberModel family});
   Future<ResGetFaimilyRequestList> getFaimilyRequestList();
   Future<ResEmpty> acceptRejectRequestFaimily({required ReqAcceptRejectRequestFaimily req});
+
+  Future<ResEmpty> addNikolGurukul({required NikolGurukulData nikol});
+  Future<ResNikolGurukul> getNikolList();
+  Future<ResEmpty> updateNikol({required NikolGurukulData data});
+
+  Future<ResEmpty> addSgrsGurukul({required SgrsGurukulData data});
+  Future<ResSgrsGurukul> getSgrsList();
+  Future<ResEmpty> updateSgrs({required SgrsGurukulData data});
 
 }
 
@@ -307,6 +318,116 @@ class ProfileDataImpl implements ProfileData{
     req.memberID = user.userID;
 
     final res = await WebService.shared.postApiDIO(path: ServerConfigs.acceptRejectRequestFaimily,data: req.toJson());
+
+    try {
+      return ResEmpty.fromJson(res!);
+    } catch (e) {
+      throw '$jsonParserErrorMsg';
+    }
+  }
+
+  @override
+  Future<ResEmpty> addNikolGurukul({required NikolGurukulData nikol}) async {
+
+    final user = await UserPrefs.shared.getUser;
+
+    nikol.memberId = user.userID;
+
+    print(nikol.toJson());
+
+    var formData = FormData.fromMap(nikol.toJson());
+
+    final res = await WebService.shared.postApiDIO(path: ServerConfigs.addNikolGurukul, data: formData,cancelToken: cancelToken);
+
+    try {
+      return ResEmpty.fromJson(res!);
+    } catch (e) {
+      throw '$jsonParserErrorMsg';
+    }
+
+  }
+
+  @override
+  Future<ResNikolGurukul> getNikolList() async {
+
+    final user = await UserPrefs.shared.getUser;
+
+    final req= ReqNikolAndSgrsGurukul(
+      memberId: user.userID,
+      isCurrentGurukul: 1
+    );
+
+    var formData = FormData.fromMap(req.toJson());
+
+    final res = await WebService.shared.postApiDIO(path: ServerConfigs.getNikolAndSgrsGurukul, data: formData,cancelToken: cancelToken);
+
+    try {
+      return ResNikolGurukul.fromJson(res!);
+    } catch (e) {
+      throw '$jsonParserErrorMsg';
+    }
+  }
+
+  @override
+  Future<ResEmpty> updateNikol({required NikolGurukulData data}) async {
+    final user = await UserPrefs.shared.getUser;
+    data.memberId = user.userID;
+
+    final res = await WebService.shared.postApiDIO(path: ServerConfigs.updateNikolAndSgrsGurukul,data: data.toJson(),cancelToken: cancelToken);
+
+    try {
+      return ResEmpty.fromJson(res!);
+    } catch (e) {
+      throw '$jsonParserErrorMsg';
+    }
+  }
+
+  @override
+  Future<ResEmpty> addSgrsGurukul({required SgrsGurukulData data}) async {
+    final user = await UserPrefs.shared.getUser;
+
+    data.memberId = user.userID;
+
+    print(data.toJson());
+
+    var formData = FormData.fromMap(data.toJson());
+
+    final res = await WebService.shared.postApiDIO(path: ServerConfigs.addSgrsGurukul, data: formData,cancelToken: cancelToken);
+
+    try {
+      return ResEmpty.fromJson(res!);
+    } catch (e) {
+      throw '$jsonParserErrorMsg';
+    }
+
+  }
+
+  @override
+  Future<ResSgrsGurukul> getSgrsList() async {
+    final user = await UserPrefs.shared.getUser;
+
+    final req= ReqNikolAndSgrsGurukul(
+        memberId: user.userID,
+        isCurrentGurukul: 0
+    );
+
+    var formData = FormData.fromMap(req.toJson());
+
+    final res = await WebService.shared.postApiDIO(path: ServerConfigs.getNikolAndSgrsGurukul, data: formData,cancelToken: cancelToken);
+
+    try {
+      return ResSgrsGurukul.fromJson(res!);
+    } catch (e) {
+      throw '$jsonParserErrorMsg';
+    }
+  }
+
+  @override
+  Future<ResEmpty> updateSgrs({required SgrsGurukulData data}) async {
+    final user = await UserPrefs.shared.getUser;
+    data.memberId = user.userID;
+
+    final res = await WebService.shared.postApiDIO(path: ServerConfigs.updateNikolAndSgrsGurukul,data: data.toJson(),cancelToken: cancelToken);
 
     try {
       return ResEmpty.fromJson(res!);

@@ -34,4 +34,8 @@ class ServerConfigs{
   static String acceptRejectRequestFaimily = 'acceptRejectRequestFaimily';
   static String getGurukulPost = 'getGurukulPostList';
   static String getGurukulPostDetail = 'gurukulPostDetailsByWallId';
+  static String addNikolGurukul = 'nikolGurukul';
+  static String  getNikolAndSgrsGurukul = 'editGurukul';
+  static String  updateNikolAndSgrsGurukul = 'updateGurukulNikolAndSGRS';
+  static String  addSgrsGurukul = 'SGRSGurukul';
 }
