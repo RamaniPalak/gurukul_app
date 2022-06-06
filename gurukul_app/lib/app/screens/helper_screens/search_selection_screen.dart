@@ -142,7 +142,7 @@ class SearchList extends StatelessWidget {
                         ),
                       ))),
               Container(
-                margin: EdgeInsets.all(kFlexibleSize(13)),
+                margin: EdgeInsets.all(kFlexibleSize(10)),
                 child: Icon(Icons.arrow_drop_down,color:enabled ? Colors.black : Colors.grey,size: kFlexibleSize(30.0),),
               )
             ],

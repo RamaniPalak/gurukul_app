@@ -16,6 +16,7 @@ import 'package:gurukul_app/app/views/base_text_field.dart';
 import 'package:gurukul_app/app/views/category_type_drop_down.dart';
 import 'package:gurukul_app/app/views/common_images.dart';
 import 'package:gurukul_app/app/views/date_pick_view.dart';
+import 'package:gurukul_app/app/views/loading_small.dart';
 import 'package:gurukul_app/app/views/network_image.dart';
 import 'package:provider/provider.dart';
 
@@ -30,7 +31,7 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
   DateTime? selectedBirthDate;
   DateTime? selectedMarriageDate;
 
-  PickImage? pickImage;
+  PickImage pickImage = PickImage();
 
   File? img;
 
@@ -68,6 +69,8 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
   bool isTermsFetched = false;
 
   bool isTop = true;
+
+  bool isLoading = false;
 
   _scrollListener() {
 
@@ -259,22 +262,18 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
 
     });
 
-    pickImage = PickImage(
-        context: context,
-        updateFile: () async {
-          try{
+    pickImage.onFile = (file){
+      setState(() {
+        img = File(file);
+      });
+    };
 
-            print(pickImage?.imageFile?.path);
+    pickImage.onLoading = (isLoading){
+      setState(() {
+        this.isLoading = isLoading;
+      });
+    };
 
-            setState(() {
-              img = pickImage?.imageFile;
-            });
-
-          }catch(e){
-            print("Exception:");
-            print(e);
-          }
-        });
   }
 
   @override
@@ -337,7 +336,7 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
                               ) ,
                             ),
                             onTap: (){
-                              pickImage?.selectImage();
+                              pickImage.selectImage(context);
                             },
                           ),
                           Container(
@@ -541,6 +540,10 @@ class _EditProfileScreenState extends BaseState<EditProfileScreen> {
   }
 
   Widget profileImage({ResUserBasicDetailsData? data}) {
+
+    if(isLoading){
+      return Center(child: LoadingSmall());
+    }
 
     if(img != null){
       return Image.file(img!,fit: BoxFit.cover,);

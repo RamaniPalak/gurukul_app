@@ -13,6 +13,8 @@ import 'package:gurukul_app/app/screens/base/base_state_full.dart';
 import 'package:gurukul_app/app/screens/family_list/family_list_screen.dart';
 import 'package:gurukul_app/app/screens/helper_screens/side_menu_screen.dart';
 import 'package:gurukul_app/app/screens/hobbies_skills/hobbies_and_skills.dart';
+import 'package:gurukul_app/app/screens/nikol_gurukul/nikol_gurukul_form.dart';
+import 'package:gurukul_app/app/screens/sgrs_gurukul/sgrs_gurukul_screen.dart';
 import 'package:gurukul_app/app/utils/constants.dart';
 import 'package:gurukul_app/app/utils/enums.dart';
 import 'package:gurukul_app/app/utils/extensions.dart';
@@ -158,11 +160,29 @@ class _HomeScreenState extends BaseState<ProfileScreen> {
                 )),
                 defaultSizeBoxHeight(height: 10),
                 //profession
-                professionConsumer(),
+              //  professionConsumer(),
                 defaultSizeBoxHeight(height: 10),
 
                 //Gurukuls
-                gurukulComponentConsumer(),
+                // gurukulComponentConsumer(),
+                defaultSizeBoxHeight(height: 10),
+                titleIconButtons(
+                    title: ' Gurukul',
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => SGRSGurukulScreen(),
+                                ));
+                    }),
+                defaultSizeBoxHeight(height: 10),
+                titleIconButtons(
+                  title: 'Nikol Gurukul',
+                  onTap: () {
+
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => NikolGurukulForm(),
+                    ));
+                  }),
+                defaultSizeBoxHeight(height: 10),
 
                 // defaultSizeBoxHeight(height: 10),
                 // titleIconButtons(
@@ -171,8 +191,6 @@ class _HomeScreenState extends BaseState<ProfileScreen> {
                 //       Navigator.of(context).pushNamed(kNikolGurukulFormRoute);
                 //     }),
 
-
-                defaultSizeBoxHeight(height: 10),
                 titleIconButtons(
                     title: 'Hobbies & Skills',
                     onTap: () {

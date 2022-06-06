@@ -8,6 +8,8 @@ import 'package:gurukul_app/app/data/entity/res_entity/res_get_address.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_get_family_member_byuser_id.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_get_gurukul_list.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_get_skill_hobby_by_userId.dart';
+import 'package:gurukul_app/app/data/entity/res_entity/res_nikol_gurukul.dart';
+import 'package:gurukul_app/app/data/entity/res_entity/res_sgrs_gurukul.dart';
 import 'package:gurukul_app/app/data/entity/res_entity/res_user_basic_details.dart';
 import 'package:gurukul_app/app/utils/enums.dart';
 
@@ -82,6 +84,31 @@ class ProfileRepository{
 
   Future<ResEmpty> acceptRejectRequestFaimily({required ReqAcceptRejectRequestFaimily req}) async{
     return await dataSource.acceptRejectRequestFaimily(req: req);
+  }
+
+
+  Future<ResEmpty> addNikolGurukul({required NikolGurukulData nikol}) async {
+    return await dataSource.addNikolGurukul(nikol: nikol);
+  }
+
+  Future<ResNikolGurukul> getNikolList() async{
+    return await dataSource.getNikolList();
+  }
+
+  Future<ResEmpty> updateNikol({required NikolGurukulData data}) async {
+    return await dataSource.updateNikol(data: data);
+  }
+
+  Future<ResEmpty> addSgrsGurukul({required SgrsGurukulData data}) async {
+    return await dataSource.addSgrsGurukul(data: data);
+  }
+
+  Future<ResSgrsGurukul> getSgrsList() async{
+    return await dataSource.getSgrsList();
+  }
+
+  Future<ResEmpty> updateSgrs({required SgrsGurukulData data}) async {
+    return await dataSource.updateSgrs(data: data);
   }
 
 }
